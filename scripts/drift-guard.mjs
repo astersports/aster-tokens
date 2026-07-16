@@ -25,12 +25,12 @@ let failed = 0;
 /* ── 1. colors: tokens.css <-> tokens.js (hex) ─────────────────────────── */
 const colorCss = read("../tokens.css");
 const colorVars = Object.fromEntries(
-  [...colorCss.matchAll(/--as-([a-z0-9-]+):\s*(#[0-9A-Fa-f]{6})/g)].map(([, k, v]) => [k, v.toUpperCase()]),
+  [...colorCss.matchAll(/--atk-([a-z0-9-]+):\s*(#[0-9A-Fa-f]{6})/g)].map(([, k, v]) => [k, v.toUpperCase()]),
 );
 for (const [cssKey, hex] of Object.entries(colorVars)) {
   const jsVal = tokens[camel(cssKey)]?.toUpperCase();
   if (jsVal !== hex) {
-    console.error(`DRIFT (color): --as-${cssKey} = ${hex}  but  tokens.${camel(cssKey)} = ${jsVal ?? "MISSING"}`);
+    console.error(`DRIFT (color): --atk-${cssKey} = ${hex}  but  tokens.${camel(cssKey)} = ${jsVal ?? "MISSING"}`);
     failed++;
   }
 }
@@ -42,12 +42,12 @@ for (const jsKey of Object.keys(tokens)) {
 /* ── 2. type: typography.css <-> typography.js (values) ────────────────── */
 const typeCss = read("../typography.css");
 const typeVars = Object.fromEntries(
-  [...typeCss.matchAll(/--as-([a-z0-9-]+):\s*([^;]+);/g)].map(([, k, v]) => [k, norm(v)]),
+  [...typeCss.matchAll(/--atk-([a-z0-9-]+):\s*([^;]+);/g)].map(([, k, v]) => [k, norm(v)]),
 );
 for (const [cssKey, val] of Object.entries(typeVars)) {
   const jsVal = typography[camel(cssKey)] === undefined ? undefined : norm(typography[camel(cssKey)]);
   if (jsVal !== val) {
-    console.error(`DRIFT (type): --as-${cssKey} = "${val}"  but  typography.${camel(cssKey)} = ${jsVal === undefined ? "MISSING" : `"${jsVal}"`}`);
+    console.error(`DRIFT (type): --atk-${cssKey} = "${val}"  but  typography.${camel(cssKey)} = ${jsVal === undefined ? "MISSING" : `"${jsVal}"`}`);
     failed++;
   }
 }
