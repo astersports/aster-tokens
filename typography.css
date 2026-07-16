@@ -1,0 +1,39 @@
+/**
+ * @aster/tokens — CANONICAL Aster type values (v0.2.0), the CSS mirror of typography.js.
+ *
+ * VALUES ONLY (no components, no side-effecting selectors — pure custom properties, same
+ * philosophy as tokens.css). A consumer applies these itself, e.g.:
+ *   body { font-family: var(--as-font-sans); font-feature-settings: var(--as-font-feature-legibility); }
+ * Keep in EXACT sync with typography.js — `npm run drift-guard` (CI) enforces it.
+ *
+ * The type SYSTEM is uniform on every Aster surface; the per-surface typeface DEVIATIONS
+ * (parish Fraunces, aster-io Instrument Serif / IBM Plex, studio Space Grotesk, …) live in
+ * surface-classes.json, which the consumer drift-guard enforces.
+ */
+:root {
+  /* Default UI font stack (Inter + native fallback chain). Per-surface display/mono
+     faces are approved deviations in surface-classes.json — not redeclared here. */
+  --as-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+  /* Inter small-size legibility (architect ruling D2, 2026-07-16): cv05 = disambiguated
+     lowercase l, cv08 = slashed zero. Apply as font-feature-settings on the UI root. */
+  --as-font-feature-legibility: 'cv05', 'cv08';
+
+  /* Type scale (px) — 24 / 20 / 17 / 15 / 13 / 11. Held exactly. 13 = body floor, 11 = label floor. */
+  --as-fs-display: 24px;
+  --as-fs-title:   20px;
+  --as-fs-heading: 17px;
+  --as-fs-body:    15px;
+  --as-fs-meta:    13px;
+  --as-fs-label:   11px;
+
+  /* Weights — load only these; never rely on synthetic bold. */
+  --as-fw-regular:  400;
+  --as-fw-medium:   500;
+  --as-fw-semibold: 600;
+  --as-fw-bold:     700;
+
+  /* Line-heights */
+  --as-lh-tight: 1.2; /* headers */
+  --as-lh-body:  1.5; /* body */
+}

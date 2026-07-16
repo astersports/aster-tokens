@@ -1,11 +1,11 @@
 # @aster/tokens
 
-**Canonical Aster design tokens** — one light palette for every **Aster-branded** surface,
-defined ONCE here and read by every repo, so a change to the palette **propagates to every
-repo with no manual gap**. Values-only: no components, no runtime dependencies.
+**Canonical Aster design tokens + type** — one light palette **and one type system** for every
+**Aster-branded** surface, defined ONCE here and read by every repo, so a change **propagates to
+every repo with no manual gap**. Values-only: no components, no runtime dependencies.
 
 Consumed as a **private cross-repo dependency** (same mechanism as `@aster/weather`):
-`"@aster/tokens": "github:astersports/aster-tokens#v0.1.0"`.
+`"@aster/tokens": "github:astersports/aster-tokens#v0.2.0"`.
 
 > **Out of scope by design:** `st-patricks-armonk` (a client parish brand) does **not**
 > consume this — it carries the client's brand, not Aster's. `aster-weather` has no UI.
@@ -45,14 +45,41 @@ so nothing breaks — apps migrate off it at the **post-R2 reskin, not mid-pilot
 Semantic status colors (success/warning/danger/info), team colors, and per-repo decorative
 tokens are **not** part of this package — they're functional or tenant/data-driven.
 
+## 1b. Type + surface classes (v0.2.0 — values-only, no components)
+
+The type **system** is uniform on every Aster surface; the **typeface** varies by surface class
+as a documented approved deviation. Both ship as values:
+
+- **`typography.css`** — pure `:root` custom properties: `--as-font-sans` (Inter + fallback chain),
+  `--as-font-feature-legibility` (`'cv05','cv08'`), the scale `--as-fs-{display,title,heading,body,meta,label}`
+  = **24/20/17/15/13/11px** (13 body floor, 11 label floor), weights `--as-fw-*` (400/500/600/700),
+  line-heights `--as-lh-{tight,body}`. No `body{}` selector — the consumer applies them.
+- **`surface-classes.json`** — the drift detector as **machine-readable data** (surface → approved
+  body/display/mono families). The consumer drift-guard reads it to **enforce** that a repo only
+  loads the families approved for its surface, so the deviation table can't be violated silently.
+
+| Surface class | Repos | Body | Display | Mono |
+|---|---|---|---|---|
+| mobile-app | aster-sports, legacy-hoopers (app) | Inter | Inter | — |
+| company-landing | aster-io | IBM Plex Sans | Instrument Serif | IBM Plex Mono |
+| marketing-demo | legacy-hoopers | Inter | Space Grotesk (+ Barlow watermark) | Space Mono |
+| dark-saas | aster-studio | Inter | Space Grotesk | Space Mono |
+| scoreboard (`.bc-root`) | aster-sports | Barlow | Barlow Condensed | — |
+
+Out of scope: `st-patricks-armonk` (client parish brand: Fraunces + Inter), `aster-weather` (no UI).
+**Lesson baked in:** byte-verify a font's real consumers before removing it — the sweep that seeded
+type here caught three "dead" fonts that were live.
+
 ## 2. Consume it
 
 ```css
 /* your repo's global stylesheet */
-@import "@aster/tokens/tokens.css";
+@import "@aster/tokens/tokens.css";       /* colors */
+@import "@aster/tokens/typography.css";   /* type values */
 ```
 ```js
-import { tokens } from "@aster/tokens"; // { ground: "#FCFBF9", navyUi: "#12244D", … }
+import { tokens, typography } from "@aster/tokens"; // { ground:"#FCFBF9", … }, { fontSans:"…", fsBody:"15px", … }
+import surfaceClasses from "@aster/tokens/surface-classes.json" with { type: "json" };
 ```
 
 ### The shim: keep your local names, map the values (no rename churn)
@@ -92,8 +119,10 @@ Rollback = pin the previous `v`. Every hop is versioned, reviewable, reversible.
 
 ## 4. Drift-guard (mandatory backstop)
 
-**Package side** (`npm run drift-guard`, runs in this repo's CI): asserts `tokens.css`
-and `tokens.js` encode the same hex per role, so the two mirrors can't diverge.
+**Package side** (`npm run drift-guard`, runs in this repo's CI): asserts `tokens.css` ↔
+`tokens.js` (hex per role) **and** `typography.css` ↔ `typography.js` (type values per role)
+agree, **and** that `surface-classes.json` is well-formed (scale is `24/20/17/15/13/11`, every
+surface has a body face + repos) — so no mirror can silently diverge.
 
 **Consumer side** (lives in each consuming repo, runs in its CI): asserts the repo's
 **resolved** local token values equal these canonical values, so a repo can't silently
@@ -119,3 +148,7 @@ That's the "no gaps" property: propagation (Renovate bumps) **and** anti-drift (
 
 Never change a shipped value silently — bump, so the bump PRs carry the change into every
 repo under review.
+
+**Releases:** `v0.1.0` palette (color tokens). `v0.2.0` adds the type system (`typography.css`
+/ `.js`) + the machine-readable `surface-classes.json` + the drift-guard coverage for both —
+**cut before any consumer wires**, so every repo wires once against the complete surface.

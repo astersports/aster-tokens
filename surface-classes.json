@@ -1,0 +1,52 @@
+{
+  "$schema-note": "Canonical surface-class -> approved-typeface map (the drift detector, machine-readable). The consumer drift-guard reads this to ENFORCE that a repo only loads the font families approved for its surface class, so the deviation table can't be violated silently. Prose narrative + rationale live in the README. One system, few voices; anything off this file is a bug.",
+  "version": "0.2.0",
+  "ruling": "D1 One system, few voices (architect 2026-07-16)",
+  "uniformSystem": {
+    "scalePx": [24, 20, 17, 15, 13, 11],
+    "bodyFloorPx": 13,
+    "labelFloorPx": 11,
+    "interWeights": [400, 500, 600, 700],
+    "legibilityFeatures": ["cv05", "cv08"],
+    "interFallbackChain": "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
+    "declareOnceInherit": true,
+    "smoothing": ["-webkit-font-smoothing: antialiased", "-moz-osx-font-smoothing: grayscale"],
+    "mobile": { "minTapTargetPx": 44, "formInputPx": 16, "viewport": "viewport-fit=cover" }
+  },
+  "surfaces": {
+    "mobile-app": {
+      "repos": ["aster-sports", "legacy-hoopers (app-side)"],
+      "body": "Inter", "display": "Inter", "mono": null,
+      "notes": "Canonical. cv05/cv08 on."
+    },
+    "scoreboard-broadcast": {
+      "repos": ["aster-sports"], "scope": ".bc-root",
+      "body": "Barlow", "display": "Barlow Condensed", "mono": null,
+      "notes": "Scoped subsystem only; not general UI."
+    },
+    "company-landing": {
+      "repos": ["aster-io"],
+      "body": "IBM Plex Sans", "display": "Instrument Serif", "mono": "IBM Plex Mono",
+      "notes": "Approved editorial voice. Target end-state = these 3 families only. Currently 5 load (also Inter + Space Grotesk, live on /privacy + /terms) — see tracked follow-up.",
+      "allowedTransitional": ["Inter", "Space Grotesk"]
+    },
+    "marketing-demo": {
+      "repos": ["legacy-hoopers"],
+      "body": "Inter", "display": "Space Grotesk", "displayAux": "Barlow Condensed", "mono": "Space Mono",
+      "notes": "Approved marketing identity (distinct from the app-side). Barlow Condensed is LIVE via the .watermark logo — not dead load."
+    },
+    "dark-saas": {
+      "repos": ["aster-studio"],
+      "body": "Inter", "display": "Space Grotesk", "mono": "Space Mono",
+      "notes": "Space Grotesk header = Architect-scoped brand exception (repo section 2.4); ratified. Dead Barlow load pending tier-2 removal."
+    }
+  },
+  "outOfScope": {
+    "st-patricks-armonk": "Client parish brand (Fraunces headings + Inter body) — carries the client's brand, not Aster's. Not a consumer of @aster/tokens.",
+    "aster-weather": "Headless library, no UI surface."
+  },
+  "gateAmendment": {
+    "resultVocabulary": "Final/LIVE attached to a score or completed state (banned on invented data, ruling 1B).",
+    "legitimate": "Round names in schedule rows (Semifinal A, Final, Regional Finals — a matchup with time/court, no score) are legitimate tournament nomenclature, not results."
+  }
+}

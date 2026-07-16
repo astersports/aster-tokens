@@ -1,26 +1,34 @@
 {
   "name": "@aster/tokens",
-  "version": "0.1.0",
-  "description": "Canonical Aster design tokens — one light palette for every Aster-branded surface. Values-only: no components, no runtime dependencies.",
+  "version": "0.2.0",
+  "description": "Canonical Aster design tokens + type — one light palette and one type system for every Aster-branded surface. Values-only: no components, no runtime dependencies.",
   "type": "module",
   "license": "UNLICENSED",
   "private": false,
   "exports": {
     ".": {
-      "types": "./tokens.d.ts",
-      "import": "./tokens.js"
+      "types": "./index.d.ts",
+      "import": "./index.js"
     },
     "./tokens.css": "./tokens.css",
-    "./css": "./tokens.css"
+    "./typography.css": "./typography.css",
+    "./css": "./tokens.css",
+    "./surface-classes.json": "./surface-classes.json"
   },
-  "types": "./tokens.d.ts",
+  "types": "./index.d.ts",
   "sideEffects": [
     "*.css"
   ],
   "files": [
+    "index.js",
+    "index.d.ts",
     "tokens.css",
     "tokens.js",
     "tokens.d.ts",
+    "typography.css",
+    "typography.js",
+    "typography.d.ts",
+    "surface-classes.json",
     "scripts/drift-guard.mjs"
   ],
   "scripts": {
