@@ -1,0 +1,16 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  drift-guard:
+    name: token integrity (css == js)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Drift-guard — tokens.css and tokens.js must agree
+        run: node scripts/drift-guard.mjs

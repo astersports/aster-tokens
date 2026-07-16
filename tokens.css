@@ -1,0 +1,41 @@
+/**
+ * @aster/tokens — CANONICAL Aster design tokens (v0.1.0).
+ *
+ * One light palette for EVERY Aster-branded surface (.io, Hub/App, Print Studio,
+ * Legacy Hoopers). Values-only: no components, no runtime dependencies. Change a
+ * value here + bump the version → every consuming repo receives a version-bump PR
+ * (which is NEVER auto-merged — a human reviews each). St. Patrick in Armonk (a
+ * client parish brand) is deliberately OUT OF SCOPE and does not consume this.
+ *
+ * Consume:
+ *   @import "@aster/tokens/tokens.css";
+ * then map your repo's OWN token names to these in ONE shim file (no rename churn):
+ *   :root { --as-bg-page: var(--as-ground); --as-header: var(--as-navy-legacy); … }
+ */
+:root {
+  /* ─── Neutral surfaces + text (warm-white, .io-unified) ─── */
+  --as-ground:            #FCFBF9; /* page background */
+  --as-panel:             #FFFFFF; /* card / panel */
+  --as-panel-hover:       #F9F8F4;
+  --as-surface-secondary: #F1EFE9;
+  --as-surface-tertiary:  #EAE7DF;
+  --as-ink:               #0B1B3B; /* primary text */
+  --as-text-secondary:    #4A5568;
+  --as-text-muted:        #6B7488; /* AA text-rank floor */
+  --as-text-tertiary:     #8896AB; /* non-text only: icons, dividers */
+  --as-border:            #E6E4DC;
+  --as-border-subtle:     #EDEAE2;
+  --as-text-on-dark:      #F5F0E8; /* cream text over any navy */
+
+  /* ─── Navy (role-split — architect ruling 2026-07-16) ─── */
+  --as-navy-ui:     #12244D; /* CANONICAL interactive / UI navy (.io) */
+  --as-navy-night:  #0A1430; /* CANONICAL night surface (Constellation Board) */
+  --as-navy-legacy: #151525; /* DEPRECATED — apps migrate at the post-R2 reskin, NOT mid-pilot. Do NOT adopt for new surfaces. */
+
+  /* ─── Gold (accent — gold = achievement/accent, never act-now amber) ─── */
+  --as-gold:      #C9952E; /* accent, small fills */
+  --as-gold-hi:   #D4A843; /* accent hover / highlight */
+  --as-gold-text: #8F6708; /* gold TEXT on light (WCAG AA 6.8:1) */
+  --as-gold-tint: #F4E9CF; /* soft gold background */
+  --as-brass:     #B9871F; /* gold on light UI / small icons (AA 4.6:1) */
+}
