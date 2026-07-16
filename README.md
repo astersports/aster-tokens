@@ -14,7 +14,7 @@ Consumed as a **private cross-repo dependency** (same mechanism as `@aster/weath
 
 ## 1. Canonical palette (the source of truth)
 
-| Token (`--as-*` / JS) | Hex | Role |
+| Token (`--atk-*` / JS) | Hex | Role |
 |---|---|---|
 | `ground` | `#FCFBF9` | page background (warm-white) |
 | `panel` | `#FFFFFF` | card / panel |
@@ -50,10 +50,10 @@ tokens are **not** part of this package — they're functional or tenant/data-dr
 The type **system** is uniform on every Aster surface; the **typeface** varies by surface class
 as a documented approved deviation. Both ship as values:
 
-- **`typography.css`** — pure `:root` custom properties: `--as-font-sans` (Inter + fallback chain),
-  `--as-font-feature-legibility` (`'cv05','cv08'`), the scale `--as-fs-{display,title,heading,body,meta,label}`
-  = **24/20/17/15/13/11px** (13 body floor, 11 label floor), weights `--as-fw-*` (400/500/600/700),
-  line-heights `--as-lh-{tight,body}`. No `body{}` selector — the consumer applies them.
+- **`typography.css`** — pure `:root` custom properties: `--atk-font-sans` (Inter + fallback chain),
+  `--atk-font-feature-legibility` (`'cv05','cv08'`), the scale `--atk-fs-{display,title,heading,body,meta,label}`
+  = **24/20/17/15/13/11px** (13 body floor, 11 label floor), weights `--atk-fw-*` (400/500/600/700),
+  line-heights `--atk-lh-{tight,body}`. No `body{}` selector — the consumer applies them.
 - **`surface-classes.json`** — the drift detector as **machine-readable data** (surface → approved
   body/display/mono families). The consumer drift-guard reads it to **enforce** that a repo only
   loads the families approved for its surface, so the deviation table can't be violated silently.
@@ -84,17 +84,17 @@ import surfaceClasses from "@aster/tokens/surface-classes.json" with { type: "js
 
 ### The shim: keep your local names, map the values (no rename churn)
 Each repo keeps its OWN token vocabulary via **one documented shim file**, retired
-opportunistically toward the canonical `--as-*` names:
+opportunistically toward the canonical `--atk-*` names:
 
 ```css
 /* src/styles/aster-tokens-shim.css — the ONE place local names bind to canonical values */
 :root {
-  --as-bg-page:        var(--as-ground);
-  --as-bg-card:        var(--as-panel);
-  --as-text-primary:   var(--as-ink);
-  --as-border-default: var(--as-border);
-  --as-header:         var(--as-navy-legacy);  /* pilot; → var(--as-navy-ui) post-R2 */
-  --as-accent:         var(--as-gold);
+  --atk-bg-page:        var(--atk-ground);
+  --atk-bg-card:        var(--atk-panel);
+  --atk-text-primary:   var(--atk-ink);
+  --atk-border-default: var(--atk-border);
+  --atk-header:         var(--atk-navy-legacy);  /* pilot; → var(--atk-navy-ui) post-R2 */
+  --atk-accent:         var(--atk-gold);
   /* … */
 }
 ```
@@ -103,8 +103,8 @@ opportunistically toward the canonical `--as-*` names:
 | Repo | Local namespace | Shim file |
 |---|---|---|
 | aster-io (.io) | `--ground/--ink/--navy/…` | `client/src/styles/aster-tokens-shim.css` |
-| aster-sports (Hub/App) | `--as-*` | `src/styles/aster-tokens-shim.css` |
-| aster-studio (Print Studio) | `--as-*` + shadcn `--*` | `client/src/aster-tokens-shim.css` |
+| aster-sports (Hub/App) | `--atk-*` | `src/styles/aster-tokens-shim.css` |
+| aster-studio (Print Studio) | `--atk-*` + shadcn `--*` | `client/src/aster-tokens-shim.css` |
 | legacy-hoopers | `--color-*` / `--primary` | `client/src/aster-tokens-shim.css` |
 
 ## 3. Propagation — how a change reaches every repo
@@ -132,7 +132,7 @@ hand-edit away from the package. Copyable pattern:
 // scripts/aster-tokens-drift-guard.mjs (in the consuming repo)
 import { tokens } from "@aster/tokens";
 // LOCAL_MAP: this repo's local token name -> the canonical token it must equal.
-const LOCAL_MAP = { "--as-bg-page": "ground", "--as-header": "navyLegacy", /* … */ };
+const LOCAL_MAP = { "--atk-bg-page": "ground", "--atk-header": "navyLegacy", /* … */ };
 // read the repo's own resolved values (from its shim/built CSS) and compare to tokens[…];
 // exit(1) on any mismatch. Fails the PR the moment a value drifts.
 ```
