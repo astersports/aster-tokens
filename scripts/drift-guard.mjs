@@ -36,7 +36,30 @@ for (const [cssKey, hex] of Object.entries(colorVars)) {
 }
 const colorKeys = new Set(Object.keys(colorVars).map(camel));
 for (const jsKey of Object.keys(tokens)) {
-  if (!colorKeys.has(jsKey)) { console.error(`DRIFT (color): tokens.${jsKey} has no matching --as-* in tokens.css`); failed++; }
+  if (!colorKeys.has(jsKey)) { console.error(`DRIFT (color): tokens.${jsKey} has no matching --atk-* in tokens.css`); failed++; }
+}
+
+/* ── 1b. colors: assert the RATIFIED CANONICAL values ──────────────────────
+   The css<->js check above only proves the two mirrors AGREE — it cannot catch a
+   value that is wrong in BOTH (e.g. gold shipped as #b8860b in css AND js). This
+   pins every color to the architect-ratified .io palette, so a wrong gold can never
+   become the "source of truth" the propagation layer faithfully spreads. */
+const CANON = {
+  ground: "#FCFBF9", panel: "#FFFFFF", panelHover: "#F9F8F4",
+  surfaceSecondary: "#F1EFE9", surfaceTertiary: "#EAE7DF",
+  ink: "#0B1B3B", textSecondary: "#4A5568", textMuted: "#6B7488", textTertiary: "#8896AB",
+  border: "#E6E4DC", borderSubtle: "#EDEAE2", textOnDark: "#F5F0E8",
+  navyUi: "#12244D", navyNight: "#0A1430", navyLegacy: "#151525",
+  gold: "#C9952E", goldHi: "#D4A843", goldText: "#8F6708", goldTint: "#F4E9CF", brass: "#B9871F",
+};
+for (const [k, hex] of Object.entries(CANON)) {
+  if ((tokens[k] ?? "").toUpperCase() !== hex.toUpperCase()) {
+    console.error(`OFF-CANON (color): tokens.${k} = ${tokens[k] ?? "MISSING"}  (ratified ${hex})`);
+    failed++;
+  }
+}
+for (const k of Object.keys(tokens)) {
+  if (!(k in CANON)) { console.error(`OFF-CANON (color): tokens.${k} is not in the ratified canon set`); failed++; }
 }
 
 /* ── 2. type: typography.css <-> typography.js (values) ────────────────── */
@@ -53,7 +76,7 @@ for (const [cssKey, val] of Object.entries(typeVars)) {
 }
 const typeKeys = new Set(Object.keys(typeVars).map(camel));
 for (const jsKey of Object.keys(typography)) {
-  if (!typeKeys.has(jsKey)) { console.error(`DRIFT (type): typography.${jsKey} has no matching --as-* in typography.css`); failed++; }
+  if (!typeKeys.has(jsKey)) { console.error(`DRIFT (type): typography.${jsKey} has no matching --atk-* in typography.css`); failed++; }
 }
 
 /* ── 3. surface-classes.json well-formed ──────────────────────────────── */
