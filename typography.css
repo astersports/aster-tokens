@@ -1,39 +1,85 @@
 /**
- * @aster/tokens — CANONICAL Aster type values (v0.2.0), the CSS mirror of typography.js.
+ * @aster/tokens — CANONICAL Aster type values (v0.3.0), the CSS mirror of typography.js.
  *
  * VALUES ONLY (no components, no side-effecting selectors — pure custom properties, same
- * philosophy as tokens.css). A consumer applies these itself, e.g.:
- *   body { font-family: var(--atk-font-sans); font-feature-settings: var(--atk-font-feature-legibility); }
+ * philosophy as tokens.css). A consumer applies these itself, binding its LOCAL names to
+ * ONE surface class's roles via a shim, e.g. an App-clean repo:
+ *   :root { --my-font-sans: var(--atk-app-body); --my-font-display: var(--atk-app-display); }
+ *   body  { font-family: var(--my-font-sans);
+ *           font-feature-settings: var(--atk-app-feature-legibility); }
  * Keep in EXACT sync with typography.js — `npm run drift-guard` (CI) enforces it.
  *
- * The type SYSTEM is uniform on every Aster surface; the per-surface typeface DEVIATIONS
- * (parish Fraunces, aster-io Instrument Serif / IBM Plex, studio Space Grotesk, …) live in
- * surface-classes.json, which the consumer drift-guard enforces.
+ * TWO SURFACE CLASSES, ONE PALETTE (Fleet Type & Design Standard, architect 2026-07-17):
+ *   • Editorial  (marketing/brand): Instrument Serif display + IBM Plex Sans body + IBM Plex Mono.
+ *   • App-clean  (product):         Inter display + Inter body + IBM Plex Mono.
+ * A surface wears the class that matches its JOB, not its plumbing. Per-repo class routing
+ * is in surface-classes.json (the drift-guard's source of truth); the type FAMILIES per
+ * class are the *-display/*-body/*-mono roles below.
  */
 :root {
-  /* Default UI font stack (Inter + native fallback chain). Per-surface display/mono
-     faces are approved deviations in surface-classes.json — not redeclared here. */
+  /* ─────────────────────────────────────────────────────────────────────────
+     TYPE ROLES BY CLASS (v0.3.0). A consumer binds its local names to ONE class.
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Editorial — marketing/brand surfaces (aster-io, legacy-hoopers). */
+  --atk-ed-display: 'Instrument Serif', 'Times New Roman', serif;
+  --atk-ed-body:    'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --atk-ed-mono:    'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* App-clean — product surfaces (aster-sports Hub, aster-studio, st-patricks base). */
+  --atk-app-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --atk-app-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --atk-app-mono:    'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Per-class legibility features (architect ruling §3.2, 2026-07-17):
+     cv05 = disambiguated lowercase l, cv08 = slashed zero. These are INTER
+     character-variants — App-clean ONLY. IBM Plex does not honor cv05/cv08, so
+     the Editorial class is 'normal' (explicit, so the drift-guard asserts the
+     NEGATIVE — Plex roles carry no cv05/cv08 — rather than inferring an absence). */
+  --atk-app-feature-legibility: 'cv05', 'cv08';
+  --atk-ed-feature-legibility:  normal;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     RATIFIED TYPE SCALE (v0.3.0) — 34 / 24 / 20 / 17 / 15 / 12 px, both classes.
+     17px is the READABLE-BODY FLOOR: anything a user reads (schedules, standings,
+     descriptions, body copy) is >=17px. Dense data TABLES may use 15px cells and
+     no lower for read content. 12px is a LABEL-ONLY floor (uppercase tags,
+     timestamps, glance metadata — never a sentence). Declare-once / inherit;
+     tabular-nums on all data (--atk-numeric). 13/11 retired as floors. ────────── */
+  --atk-scale-1: 34px; /* hero / marketing display */
+  --atk-scale-2: 24px; /* display */
+  --atk-scale-3: 20px; /* title */
+  --atk-scale-4: 17px; /* READABLE-BODY FLOOR — headings + read content */
+  --atk-scale-5: 15px; /* dense data cells (tables) — min for read content */
+  --atk-scale-6: 12px; /* LABEL-ONLY floor — uppercase tags / timestamps */
+
+  --atk-numeric: tabular-nums; /* apply on all numeric/data runs */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     Weights + line-heights (shared, class-agnostic; unchanged from v0.2.0).
+     ───────────────────────────────────────────────────────────────────────── */
+  --atk-fw-regular:  400;
+  --atk-fw-medium:   500;
+  --atk-fw-semibold: 600;
+  --atk-fw-bold:     700;
+
+  --atk-lh-tight: 1.2; /* headers */
+  --atk-lh-body:  1.5; /* body */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     BACK-COMPAT (v0.2.0) — FROZEN, byte-identical. Kept so no wired consumer's
+     resolved value moves in this additive release (the v0.2.1 pins resolve these).
+     `--atk-font-sans` / `--atk-font-feature-legibility` are the App-clean default
+     (Inter + cv05/cv08); they equal the --atk-app-* roles above. DEPRECATED:
+     migrate consumers to the class roles (--atk-app-* / --atk-ed-*) + --atk-scale-*;
+     the --atk-fs-* names (old 24/20/17/15/13/11 scale, 13/11 retired as floors) are
+     dropped in a later major once no consumer resolves them. ───────────────────── */
   --atk-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-
-  /* Inter small-size legibility (architect ruling D2, 2026-07-16): cv05 = disambiguated
-     lowercase l, cv08 = slashed zero. Apply as font-feature-settings on the UI root. */
   --atk-font-feature-legibility: 'cv05', 'cv08';
-
-  /* Type scale (px) — 24 / 20 / 17 / 15 / 13 / 11. Held exactly. 13 = body floor, 11 = label floor. */
   --atk-fs-display: 24px;
   --atk-fs-title:   20px;
   --atk-fs-heading: 17px;
   --atk-fs-body:    15px;
   --atk-fs-meta:    13px;
   --atk-fs-label:   11px;
-
-  /* Weights — load only these; never rely on synthetic bold. */
-  --atk-fw-regular:  400;
-  --atk-fw-medium:   500;
-  --atk-fw-semibold: 600;
-  --atk-fw-bold:     700;
-
-  /* Line-heights */
-  --atk-lh-tight: 1.2; /* headers */
-  --atk-lh-body:  1.5; /* body */
 }

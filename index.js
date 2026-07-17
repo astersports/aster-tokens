@@ -1,5 +1,5 @@
 /**
- * @aster/tokens — canonical Aster design system values (v0.2.0).
+ * @aster/tokens — canonical Aster design system values (v0.3.0).
  * Values-only: no components, no runtime dependencies.
  *
  *   import { tokens, typography } from "@aster/tokens";
