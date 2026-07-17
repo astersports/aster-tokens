@@ -4,11 +4,12 @@
 **Aster-branded** surface, defined ONCE here and read by every repo, so a change **propagates to
 every repo with no manual gap**. Values-only: no components, no runtime dependencies.
 
-Consumed as a **private cross-repo dependency** (same mechanism as `@aster/weather`):
-`"@aster/tokens": "github:astersports/aster-tokens#v0.2.0"`.
+Consumed as a **public cross-repo dependency** (same mechanism as `@aster/weather`):
+`"@aster/tokens": "github:astersports/aster-tokens#v0.3.0"`.
 
-> **Out of scope by design:** `st-patricks-armonk` (a client parish brand) does **not**
-> consume this — it carries the client's brand, not Aster's. `aster-weather` has no UI.
+> **Out of scope by design:** `aster-weather` (headless, no UI). `st-patricks-armonk`
+> **is now in scope** (v0.3.0): it adopts the App-clean *system* (scale/weights/floors) but
+> keeps parish colors + Fraunces headings as a **declared, enforced** deviation.
 
 ---
 
@@ -45,28 +46,41 @@ so nothing breaks — apps migrate off it at the **post-R2 reskin, not mid-pilot
 Semantic status colors (success/warning/danger/info), team colors, and per-repo decorative
 tokens are **not** part of this package — they're functional or tenant/data-driven.
 
-## 1b. Type + surface classes (v0.2.0 — values-only, no components)
+## 1b. Type — two classes, one palette (v0.3.0 — values-only, no components)
 
-The type **system** is uniform on every Aster surface; the **typeface** varies by surface class
-as a documented approved deviation. Both ship as values:
+**Fleet Type & Design Standard (architect 2026-07-17):** every surface shares the one io
+navy+gold palette; **type splits by the surface's *job***, delivered as named role tokens:
 
-- **`typography.css`** — pure `:root` custom properties: `--atk-font-sans` (Inter + fallback chain),
-  `--atk-font-feature-legibility` (`'cv05','cv08'`), the scale `--atk-fs-{display,title,heading,body,meta,label}`
-  = **24/20/17/15/13/11px** (13 body floor, 11 label floor), weights `--atk-fw-*` (400/500/600/700),
-  line-heights `--atk-lh-{tight,body}`. No `body{}` selector — the consumer applies them.
-- **`surface-classes.json`** — the drift detector as **machine-readable data** (surface → approved
-  body/display/mono families). The consumer drift-guard reads it to **enforce** that a repo only
-  loads the families approved for its surface, so the deviation table can't be violated silently.
+| | **Editorial** (marketing/brand) | **App-clean** (product) |
+|---|---|---|
+| Display | Instrument Serif — `--atk-ed-display` | Inter — `--atk-app-display` |
+| Body | IBM Plex Sans — `--atk-ed-body` | Inter — `--atk-app-body` |
+| Mono/data | IBM Plex Mono — `--atk-ed-mono` | IBM Plex Mono — `--atk-app-mono` |
+| Legibility | `normal` — `--atk-ed-feature-legibility` (Plex has no cv05/cv08) | `'cv05','cv08'` — `--atk-app-feature-legibility` (Inter only) |
 
-| Surface class | Repos | Body | Display | Mono |
-|---|---|---|---|---|
-| mobile-app | aster-sports, legacy-hoopers (app) | Inter | Inter | — |
-| company-landing | aster-io | IBM Plex Sans | Instrument Serif | IBM Plex Mono |
-| marketing-demo | legacy-hoopers | Inter | Space Grotesk (+ Barlow watermark) | Space Mono |
-| dark-saas | aster-studio | Inter | Space Grotesk | Space Mono |
-| scoreboard (`.bc-root`) | aster-sports | Barlow | Barlow Condensed | — |
+A consumer binds its local names to **one class's** roles via the shim. `cv05`/`cv08` are
+**Inter** character-variants (disambiguated *l*, slashed zero) — **App-clean only**; the
+Editorial class is `normal` (explicit, so the guard asserts the *negative*).
 
-Out of scope: `st-patricks-armonk` (client parish brand: Fraunces + Inter), `aster-weather` (no UI).
+- **Scale (`--atk-scale-1..6`) = 34 / 24 / 20 / 17 / 15 / 12px**, both classes. **17px is the
+  readable-body floor** (anything a user reads); 15px is the dense-table-cell minimum; **12px is
+  a label-only floor** (uppercase tags/timestamps, never a sentence). `--atk-numeric: tabular-nums`
+  on all data. Weights `--atk-fw-*` (400/500/600/700), line-heights `--atk-lh-{tight,body}`.
+- **Back-compat (frozen):** `--atk-font-sans` / `--atk-font-feature-legibility` (the App-clean
+  default) and the old `--atk-fs-*` scale (24/20/17/15/13/11) stay byte-identical so v0.2.x pins
+  don't move. **DEPRECATED** — migrate to the class roles + `--atk-scale-*`; dropped in a later major.
+- **`surface-classes.json`** — the drift detector as **machine-readable data** (repo → class → approved
+  families). The consumer drift-guard reads it to **enforce** that a repo loads only its class's families.
+
+| Repo | Class | Note |
+|---|---|---|
+| aster-io | Editorial | The firm's storefront; Editorial reference. |
+| legacy-hoopers | Editorial | Sales demo/showroom — classified by *job*, not plumbing. |
+| aster-sports (Hub) | App-clean | Flagship; half of the Hub↔App P0 invariant. |
+| aster-studio | App-clean | Whole repo (Join/Billing included). |
+| st-patricks-armonk | App-clean + parish deviation | Parish colors + Fraunces headings (declared, enforced). |
+
+Out of scope: `aster-weather` (headless, no UI).
 **Lesson baked in:** byte-verify a font's real consumers before removing it — the sweep that seeded
 type here caught three "dead" fonts that were live.
 
@@ -121,8 +135,11 @@ Rollback = pin the previous `v`. Every hop is versioned, reviewable, reversible.
 
 **Package side** (`npm run drift-guard`, runs in this repo's CI): asserts `tokens.css` ↔
 `tokens.js` (hex per role) **and** `typography.css` ↔ `typography.js` (type values per role)
-agree, **and** that `surface-classes.json` is well-formed (scale is `24/20/17/15/13/11`, every
-surface has a body face + repos) — so no mirror can silently diverge.
+agree; that every color matches the **ratified canon** (a wrong value can't become the source
+of truth) and every type role matches the **ratified type contract** (Editorial = Instrument
+Serif/Plex/Plex Mono, App-clean = Inter/Inter/Plex Mono, cv05/cv08 on App-clean only, scale
+`34/24/20/17/15/12`); and that `surface-classes.json` routes every repo to a known class
+coherent with the role tokens — so no mirror, value, or class can silently diverge.
 
 **Consumer side** (lives in each consuming repo, runs in its CI): asserts the repo's
 **resolved** local token values equal these canonical values, so a repo can't silently
@@ -150,5 +167,8 @@ Never change a shipped value silently — bump, so the bump PRs carry the change
 repo under review.
 
 **Releases:** `v0.1.0` palette (color tokens). `v0.2.0` adds the type system (`typography.css`
-/ `.js`) + the machine-readable `surface-classes.json` + the drift-guard coverage for both —
-**cut before any consumer wires**, so every repo wires once against the complete surface.
+/ `.js`) + machine-readable `surface-classes.json` + drift-guard for both. `v0.3.0` adds the
+**two type classes as named roles** (`--atk-ed-*` / `--atk-app-*`), the ratified **34/24/20/17/15/12**
+scale (`--atk-scale-1..6`, 17px readable-body floor), the cv05/cv08 App-clean-only decision, the
+per-repo class routing (st-patricks in scope), and a guard that asserts the type contract — **purely
+additive** (every v0.2.x token frozen byte-identical; no wired consumer's resolved value moves).

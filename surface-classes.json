@@ -1,49 +1,87 @@
 {
-  "$schema-note": "Canonical surface-class -> approved-typeface map (the drift detector, machine-readable). The consumer drift-guard reads this to ENFORCE that a repo only loads the font families approved for its surface class, so the deviation table can't be violated silently. Prose narrative + rationale live in the README. One system, few voices; anything off this file is a bug.",
-  "version": "0.2.0",
-  "ruling": "D1 One system, few voices (architect 2026-07-16)",
+  "$schema-note": "Canonical surface-class routing (the drift detector, machine-readable). Every in-scope repo wears ONE of two type classes by JOB (not plumbing): 'editorial' (marketing/brand) or 'app' (product). One io navy+gold palette everywhere via tokens.css. The consumer drift-guard reads this to ENFORCE that a repo loads only the font families approved for its class, so the standard can't be violated silently. Prose + rationale live in the README and docs/ASTER_FLEET_TYPE_STANDARD_2026-07-17.md.",
+  "version": "0.3.0",
+  "ruling": "Fleet Type & Design Standard (architect 2026-07-17) — two classes by job, one io navy+gold palette. Supersedes the D1 'io-canon / Plex-everywhere' reading.",
   "uniformSystem": {
-    "scalePx": [24, 20, 17, 15, 13, 11],
-    "bodyFloorPx": 13,
-    "labelFloorPx": 11,
-    "interWeights": [400, 500, 600, 700],
-    "legibilityFeatures": ["cv05", "cv08"],
-    "interFallbackChain": "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
+    "scalePx": [34, 24, 20, 17, 15, 12],
+    "readableBodyFloorPx": 17,
+    "denseCellMinPx": 15,
+    "labelFloorPx": 12,
+    "weights": [400, 500, 600, 700],
+    "numeric": "tabular-nums",
     "declareOnceInherit": true,
     "smoothing": ["-webkit-font-smoothing: antialiased", "-moz-osx-font-smoothing: grayscale"],
     "mobile": { "minTapTargetPx": 44, "formInputPx": 16, "viewport": "viewport-fit=cover" }
   },
+  "classes": {
+    "editorial": {
+      "job": "first impression, premium feel",
+      "display": "Instrument Serif",
+      "body": "IBM Plex Sans",
+      "mono": "IBM Plex Mono",
+      "legibilityFeatures": [],
+      "roles": {
+        "display": "--atk-ed-display",
+        "body": "--atk-ed-body",
+        "mono": "--atk-ed-mono",
+        "feature": "--atk-ed-feature-legibility"
+      }
+    },
+    "app": {
+      "job": "clarity on dense screens",
+      "display": "Inter",
+      "body": "Inter",
+      "mono": "IBM Plex Mono",
+      "legibilityFeatures": ["cv05", "cv08"],
+      "roles": {
+        "display": "--atk-app-display",
+        "body": "--atk-app-body",
+        "mono": "--atk-app-mono",
+        "feature": "--atk-app-feature-legibility"
+      }
+    }
+  },
   "surfaces": {
-    "mobile-app": {
-      "repos": ["aster-sports", "legacy-hoopers (app-side)"],
-      "body": "Inter", "display": "Inter", "mono": null,
-      "notes": "Canonical. cv05/cv08 on."
-    },
-    "scoreboard-broadcast": {
-      "repos": ["aster-sports"], "scope": ".bc-root",
-      "body": "Barlow", "display": "Barlow Condensed", "mono": null,
-      "notes": "Scoped subsystem only; not general UI."
-    },
-    "company-landing": {
+    "aster-io": {
+      "class": "editorial",
       "repos": ["aster-io"],
-      "body": "IBM Plex Sans", "display": "Instrument Serif", "mono": "IBM Plex Mono",
-      "notes": "Approved editorial voice. Target end-state = these 3 families only. Currently 5 load (also Inter + Space Grotesk, live on /privacy + /terms) — see tracked follow-up.",
-      "allowedTransitional": ["Inter", "Space Grotesk"]
+      "note": "The firm's storefront — the Editorial reference implementation. Target end-state = exactly 3 families (Instrument Serif, IBM Plex Sans, IBM Plex Mono)."
     },
-    "marketing-demo": {
+    "legacy-hoopers": {
+      "class": "editorial",
       "repos": ["legacy-hoopers"],
-      "body": "Inter", "display": "Space Grotesk", "displayAux": "Barlow Condensed", "mono": "Space Mono",
-      "notes": "Approved marketing identity (distinct from the app-side). Barlow Condensed is LIVE via the .watermark logo — not dead load."
+      "note": "Sales demo / showroom — classified by JOB (showcase), NOT by plumbing. It runs on real app components (app-style UI is expected); do NOT strip its demo richness toward a bare tool."
     },
-    "dark-saas": {
+    "aster-sports": {
+      "class": "app",
+      "repos": ["aster-sports"],
+      "note": "Hub — flagship parent gateway, App-Store-bound, dense data. Half of the Hub<->App invariant (see invariants.hubAppPairing). Email-renderer literal hex is an approved exception (email clients can't use CSS vars)."
+    },
+    "aster-studio": {
+      "class": "app",
       "repos": ["aster-studio"],
-      "body": "Inter", "display": "Space Grotesk", "mono": "Space Mono",
-      "notes": "Space Grotesk header = Architect-scoped brand exception (repo section 2.4); ratified. Dead Barlow load pending tier-2 removal."
+      "note": "Print Studio — a tool, whole repo App-clean per Frank (Join/Billing included). Money repo: token/type wiring is presentational only."
+    },
+    "st-patricks-armonk": {
+      "class": "app+parish-deviation",
+      "repos": ["st-patricks-armonk"],
+      "deviation": {
+        "headings": "Fraunces",
+        "palette": "parish (client brand — NOT io navy/gold)",
+        "approved": true
+      },
+      "note": "Adopts the App-clean SYSTEM (scale, weights, floors, mono, drift-guard) but keeps parish colors + Fraunces headings as the DECLARED, enforced deviation. In scope as of 2026-07-17 (was outOfScope under D1). Pending GitHub-ownership transfer — wiring PR may wait on access."
+    }
+  },
+  "invariants": {
+    "hubAppPairing": {
+      "note": "The Hub (parent gateway) and the program App are one continuous product — a user moving between them must feel ONE product. Their App-clean type/token resolved values MUST be identical; any divergence is a P0 finding. The consumer-side drift-guard enforces this pairing hardest.",
+      "class": "app",
+      "priority": "P0"
     }
   },
   "outOfScope": {
-    "st-patricks-armonk": "Client parish brand (Fraunces headings + Inter body) — carries the client's brand, not Aster's. Not a consumer of @aster/tokens.",
-    "aster-weather": "Headless library, no UI surface."
+    "aster-weather": "Headless library, no UI/type surface. Excluded by design so the audit's coverage is provably complete (5 in-scope repos, weather out)."
   },
   "gateAmendment": {
     "resultVocabulary": "Final/LIVE attached to a score or completed state (banned on invented data, ruling 1B).",

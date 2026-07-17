@@ -1,6 +1,6 @@
 {
   "name": "@aster/tokens",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Canonical Aster design tokens + type — one light palette and one type system for every Aster-branded surface. Values-only: no components, no runtime dependencies.",
   "type": "module",
   "license": "UNLICENSED",
