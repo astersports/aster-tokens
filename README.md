@@ -75,7 +75,7 @@ Editorial class is `normal` (explicit, so the guard asserts the *negative*).
 | Repo | Class | Note |
 |---|---|---|
 | aster-io | Editorial | The firm's storefront; Editorial reference. |
-| legacy-hoopers | Editorial | Sales demo/showroom — classified by *job*, not plumbing. |
+| nova-select | Editorial | Sales demo/showroom — classified by *job*, not plumbing. |
 | aster-sports (Hub) | App-clean | Flagship; half of the Hub↔App P0 invariant. |
 | aster-studio | App-clean | Whole repo (Join/Billing included). |
 | st-patricks-armonk | App-clean + parish deviation | Parish colors + Fraunces headings (declared, enforced). |
@@ -119,7 +119,7 @@ opportunistically toward the canonical `--atk-*` names:
 | aster-io (.io) | `--ground/--ink/--navy/…` | `client/src/styles/aster-tokens-shim.css` |
 | aster-sports (Hub/App) | `--atk-*` | `src/styles/aster-tokens-shim.css` |
 | aster-studio (Print Studio) | `--atk-*` + shadcn `--*` | `client/src/aster-tokens-shim.css` |
-| legacy-hoopers | `--color-*` / `--primary` | `client/src/aster-tokens-shim.css` |
+| nova-select | `--color-*` / `--primary` | `client/src/aster-tokens-shim.css` |
 
 ## 3. Propagation — how a change reaches every repo
 

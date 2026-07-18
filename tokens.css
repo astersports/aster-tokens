@@ -2,7 +2,7 @@
  * @aster/tokens — CANONICAL Aster design tokens (v0.1.0).
  *
  * One light palette for EVERY Aster-branded surface (.io, Hub/App, Print Studio,
- * Legacy Hoopers). Values-only: no components, no runtime dependencies. Change a
+ * Nova Select). Values-only: no components, no runtime dependencies. Change a
  * value here + bump the version → every consuming repo receives a version-bump PR
  * (which is NEVER auto-merged — a human reviews each). St. Patrick in Armonk (a
  * client parish brand) is deliberately OUT OF SCOPE and does not consume this.
