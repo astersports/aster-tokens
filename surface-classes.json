@@ -47,9 +47,9 @@
       "repos": ["aster-io"],
       "note": "The firm's storefront — the Editorial reference implementation. Target end-state = exactly 3 families (Instrument Serif, IBM Plex Sans, IBM Plex Mono)."
     },
-    "legacy-hoopers": {
+    "nova-select": {
       "class": "editorial",
-      "repos": ["legacy-hoopers"],
+      "repos": ["nova-select"],
       "note": "Sales demo / showroom — classified by JOB (showcase), NOT by plumbing. It runs on real app components (app-style UI is expected); do NOT strip its demo richness toward a bare tool."
     },
     "aster-sports": {
