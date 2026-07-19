@@ -1,5 +1,5 @@
 /**
- * @aster/tokens — canonical Aster design tokens (v0.1.0), JS/TS mirror of tokens.css.
+ * @aster/tokens — canonical Aster design tokens (v0.3.1), JS/TS mirror of tokens.css.
  * Values-only. Keep in EXACT sync with tokens.css — `npm run drift-guard` (CI) enforces it.
  */
 export const tokens = {

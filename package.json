@@ -15,7 +15,11 @@
     "./css": "./tokens.css",
     "./surface-classes.json": "./surface-classes.json",
     "./tokens.js": "./tokens.js",
-    "./typography.js": "./typography.js"
+    "./typography.js": "./typography.js",
+    "./consumer-guard": {
+      "types": "./consumer-guard.d.ts",
+      "import": "./consumer-guard.js"
+    }
   },
   "types": "./index.d.ts",
   "sideEffects": [
@@ -31,9 +35,12 @@
     "typography.js",
     "typography.d.ts",
     "surface-classes.json",
+    "consumer-guard.js",
+    "consumer-guard.d.ts",
     "scripts/drift-guard.mjs"
   ],
   "scripts": {
-    "drift-guard": "node scripts/drift-guard.mjs"
+    "drift-guard": "node scripts/drift-guard.mjs",
+    "test": "node --test scripts/consumer-guard.test.mjs"
   }
 }

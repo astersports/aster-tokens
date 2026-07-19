@@ -1,5 +1,5 @@
 /**
- * @aster/tokens — canonical Aster type values (v0.3.0), JS/TS mirror of typography.css.
+ * @aster/tokens — canonical Aster type values (v0.3.1), JS/TS mirror of typography.css.
  * Values-only. Keep in EXACT sync with typography.css — `npm run drift-guard` (CI) enforces it.
  *
  * Two surface classes, one palette (Fleet Type & Design Standard, architect 2026-07-17):

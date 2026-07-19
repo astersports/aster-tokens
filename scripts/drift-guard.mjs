@@ -1,5 +1,5 @@
 /**
- * Package integrity drift-guard (v0.3.0).
+ * Package integrity drift-guard (v0.3.1).
  *
  * Asserts the package's mirrors + ratified contract can never silently diverge:
  *   1.  tokens.css      <-> tokens.js      (colors, hex per role)
