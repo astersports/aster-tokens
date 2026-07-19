@@ -1,6 +1,6 @@
 {
   "name": "@aster/tokens",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Canonical Aster design tokens + type — one light palette and one type system for every Aster-branded surface. Values-only: no components, no runtime dependencies.",
   "type": "module",
   "license": "UNLICENSED",
@@ -13,7 +13,9 @@
     "./tokens.css": "./tokens.css",
     "./typography.css": "./typography.css",
     "./css": "./tokens.css",
-    "./surface-classes.json": "./surface-classes.json"
+    "./surface-classes.json": "./surface-classes.json",
+    "./tokens.js": "./tokens.js",
+    "./typography.js": "./typography.js"
   },
   "types": "./index.d.ts",
   "sideEffects": [
