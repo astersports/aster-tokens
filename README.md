@@ -172,3 +172,8 @@ repo under review.
 scale (`--atk-scale-1..6`, 17px readable-body floor), the cv05/cv08 App-clean-only decision, the
 per-repo class routing (st-patricks in scope), and a guard that asserts the type contract — **purely
 additive** (every v0.2.x token frozen byte-identical; no wired consumer's resolved value moves).
+`v0.3.1` renames the demo surface `legacy-hoopers` → `nova-select` and **declares two approved
+deviations** in `surface-classes.json` — the aster-sports scoped Barlow `broadcast` theme
+(Records/Livescore, `.bc-root`) and the st-patricks R6 rem-lift (`html{font-size:112.5%}`) — plus
+adds the `./tokens.js` / `./typography.js` subpath exports. Additive: no class/family/scale value
+changed, so it stays byte-identical for every already-wired consumer.

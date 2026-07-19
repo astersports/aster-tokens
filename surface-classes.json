@@ -1,7 +1,7 @@
 {
   "$schema-note": "Canonical surface-class routing (the drift detector, machine-readable). Every in-scope repo wears ONE of two type classes by JOB (not plumbing): 'editorial' (marketing/brand) or 'app' (product). One io navy+gold palette everywhere via tokens.css. The consumer drift-guard reads this to ENFORCE that a repo loads only the font families approved for its class, so the standard can't be violated silently. Prose + rationale live in the README and docs/ASTER_FLEET_TYPE_STANDARD_2026-07-17.md.",
-  "version": "0.3.0",
-  "ruling": "Fleet Type & Design Standard (architect 2026-07-17) — two classes by job, one io navy+gold palette. Supersedes the D1 'io-canon / Plex-everywhere' reading.",
+  "version": "0.3.1",
+  "ruling": "Fleet Type & Design Standard (architect 2026-07-17) — two classes by job, one io navy+gold palette. Supersedes the D1 'io-canon / Plex-everywhere' reading. v0.3.1 (2026-07-19): declares two approved deviations (aster-sports scoped Barlow 'broadcast'; st-patricks R6 rem-lift) — additive, no class/family/scale value changed.",
   "uniformSystem": {
     "scalePx": [34, 24, 20, 17, 15, 12],
     "readableBodyFloorPx": 17,
@@ -55,7 +55,18 @@
     "aster-sports": {
       "class": "app",
       "repos": ["aster-sports"],
-      "note": "Hub — flagship parent gateway, App-Store-bound, dense data. Half of the Hub<->App invariant (see invariants.hubAppPairing). Email-renderer literal hex is an approved exception (email clients can't use CSS vars)."
+      "scopedDeviations": [
+        {
+          "name": "broadcast",
+          "scope": ".bc-root — the Records + Livescore sports-broadcast surfaces only",
+          "display": "Barlow Condensed",
+          "body": "Barlow",
+          "approved": true,
+          "approvedBy": "Frank 2026-07-19",
+          "note": "A deliberate sports-broadcast aesthetic (src/styles/broadcast.css + inline .bc-* sites). Scoped via .bc-root; the rest of the Hub stays App-clean (Inter / IBM Plex Mono). A consumer drift-guard honoring this MUST allow the Barlow family set within this scope and continue to flag Barlow (or any non-App-clean face) anywhere OUTSIDE it."
+        }
+      ],
+      "note": "Hub — flagship parent gateway, App-Store-bound, dense data. Half of the Hub<->App invariant (see invariants.hubAppPairing). Email-renderer literal hex is an approved exception (email clients can't use CSS vars). The Barlow 'broadcast' theme on Records/Livescore is an approved SCOPED deviation — see scopedDeviations."
     },
     "aster-studio": {
       "class": "app",
@@ -68,7 +79,13 @@
       "deviation": {
         "headings": "Fraunces",
         "palette": "parish (client brand — NOT io navy/gold)",
-        "approved": true
+        "approved": true,
+        "scale": {
+          "remLiftPercent": 112.5,
+          "approved": true,
+          "approvedBy": "Frank 2026-07-19 (ratified R6)",
+          "note": "html{font-size:112.5%} lifts the rem-based scale ~+12.5% for older-reader legibility on the parish site. The uniformSystem.scalePx values remain the MINIMUM floors AFTER the lift (post-lift body ~18px still clears the 17px readable floor); --parish-scale-* may bind rem-relative. A consumer drift-guard honoring this must NOT assert the absolute uniformSystem.scalePx verbatim against this surface's rendered px — it validates the post-lift result against the floors instead."
+        }
       },
       "note": "Adopts the App-clean SYSTEM (scale, weights, floors, mono, drift-guard) but keeps parish colors + Fraunces headings as the DECLARED, enforced deviation. In scope as of 2026-07-17 (was outOfScope under D1). Pending GitHub-ownership transfer — wiring PR may wait on access."
     }

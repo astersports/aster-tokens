@@ -14,3 +14,5 @@ jobs:
           node-version: 20
       - name: Drift-guard — tokens.css and tokens.js must agree
         run: node scripts/drift-guard.mjs
+      - name: SFGC consumer-guard tests
+        run: node --test scripts/consumer-guard.test.mjs

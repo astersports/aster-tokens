@@ -1,5 +1,5 @@
 /**
- * @aster/tokens — CANONICAL Aster type values (v0.3.0), the CSS mirror of typography.js.
+ * @aster/tokens — CANONICAL Aster type values (v0.3.1), the CSS mirror of typography.js.
  *
  * VALUES ONLY (no components, no side-effecting selectors — pure custom properties, same
  * philosophy as tokens.css). A consumer applies these itself, binding its LOCAL names to
