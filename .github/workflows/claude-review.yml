@@ -1,12 +1,24 @@
 name: Claude adversarial review
 
-# An independent AI reviewer on every human/CC-authored PR — a second pair of eyes
+# An independent AI reviewer on every EXPENSIVE-surface PR — a second pair of eyes
 # whose job is to CORRECT the author, not rubber-stamp. Reproduces the "architect
-# corrects CC" lane, automatically, on every change. Comments only (never gates).
+# corrects CC" lane, automatically, where a miss is costly. Comments only (never gates).
 #
-# Cost control: skips bot PRs (Dependabot etc. — their CI gates them) and stays a
-# silent no-op until the ANTHROPIC_API_KEY org secret is set. Uses Sonnet 5, with a
-# bounded --max-turns and cancel-in-progress concurrency to cap spend per PR.
+# SURFACE GATE (operator/architect ruling 2026-07-24). The reviewer no longer runs on
+# every PR — every run spends real API credit, and running it on docs/refactor/chrome
+# PRs drained the key. It now runs:
+#   - AUTOMATICALLY when the PR touches an EXPENSIVE surface — where a missed defect is
+#     costly: money paths, DB schema/migrations, child-data forms, floors & guards, the
+#     CI gates themselves, or admin surfaces that write real records. See EXPENSIVE_RE
+#     below (the enumerated path set for THIS repo — a sibling repo carries its own list).
+#   - ON DEMAND anywhere else (docs, refactors, chrome) by adding the `review` label to
+#     the PR. The label forces a run on ANY surface — the manual escape hatch.
+# A PR that is neither expensive-touching nor labelled gets NO review and the job still
+# succeeds green (nothing to skip-fail).
+#
+# Cost control (unchanged): skips bot PRs (Dependabot etc. — their CI gates them) and
+# stays a silent no-op until the ANTHROPIC_API_KEY org secret is set. Uses Sonnet 5,
+# with a bounded --max-turns and cancel-in-progress concurrency to cap spend per PR.
 #
 # Posting: findings go up as INLINE PR review comments via the action's own
 # inline-comment tool, plus ONE top-level summary via `gh pr comment`. The tools the
@@ -16,7 +28,8 @@ name: Claude adversarial review
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    # `labeled` lets the `review` label force an on-demand run on any surface.
+    types: [opened, synchronize, labeled]
 
 permissions:
   contents: read
@@ -35,13 +48,68 @@ jobs:
     env:
       HAS_KEY: ${{ secrets.ANTHROPIC_API_KEY }} # empty until provisioned -> steps skip
     steps:
-      - name: Checkout
+      # Decide whether this PR earns a review: expensive surface (auto) OR `review` label
+      # (manual). Gated on HAS_KEY so the whole job stays a clean no-op when the secret is
+      # unset — same skip-clean behaviour as before the surface gate.
+      - name: Decide whether to review
+        id: gate
         if: env.HAS_KEY != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          HAS_REVIEW_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'review') }}
+        run: |
+          set -euo pipefail
+          # Manual escape hatch: the `review` label forces a run on ANY surface.
+          if [ "$HAS_REVIEW_LABEL" = "true" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "Review reason: 'review' label present."
+            exit 0
+          fi
+          # EXPENSIVE surfaces for @aster/tokens (enumerated 2026-07-24). This is a
+          # values-only design-token package consumed by EVERY other Aster repo, so its
+          # "money" equivalent is the TOKEN VALUES themselves — a wrong hex / family / scale
+          # value, a broken export, or a bad version has ESTATE-WIDE blast radius (it drifts
+          # every downstream surface at once). A miss here is costly; a miss on the README
+          # is cheap. Keep this list in sync with the repo.
+          #
+          # Two kinds of rule below. FILE / DIRECTORY rules (each ^-anchored) — a surface is
+          # expensive by WHERE it lives:
+          #   tokens.*             color values: tokens.css / tokens.js + tokens.d.ts (the shipped hex canon)
+          #   typography.*         type values: typography.css / typography.js + typography.d.ts (families, cv05/cv08, scale)
+          #   index.*              the package entry re-export (index.js / index.d.ts) — a bad export breaks every consumer
+          #   surface-classes.json machine-readable surface-class routing the consumer drift-guard enforces against
+          #   consumer-guard.*     the SHARED consumer font-guard contract (consumer-guard.js / .d.ts)
+          #   package.json         the published surface: exports map, files list, version — a bad bump breaks every consumer
+          #   scripts/**           the package drift-guard + its test (integrity backstop for the mirrors)
+          #   .github/workflows/** the CI gates themselves
+          # CONTROL-CLASS rules (match a guard/lock/invariant test in ANY directory, not
+          # just scripts/) — a surface is expensive by WHAT IT IS. Guards and floors are a
+          # class that spans directories, and a PR that lowers a value AND lowers its guard
+          # in the same diff is exactly the change that most needs a second reader. A change
+          # to a control belongs in the same tier as a change to the values or the version,
+          # wherever the control's test file happens to live:
+          #   [^/]*[Gg]uard[^/]*.test.  drift-guard / consumer-guard tests (e.g. consumer-guard.test.mjs)
+          #   [^/]*[Ll]ock.test.        any future *Lock test
+          #   [^/]*[Ii]nvariant.test.   any future cross-surface invariant lock
+          EXPENSIVE_RE='(^tokens\.|^typography\.|^index\.|^surface-classes\.json|^consumer-guard\.|^package\.json|^scripts/|^\.github/workflows/|[^/]*[Gg]uard[^/]*\.test\.|[^/]*[Ll]ock\.test\.|[^/]*[Ii]nvariant\.test\.)'
+          FILES="$(gh pr diff "$PR" --repo "$REPO" --name-only)"
+          echo "Changed files:"; echo "$FILES"
+          if echo "$FILES" | grep -qE "$EXPENSIVE_RE"; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "Review reason: PR touches an expensive surface."
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "No expensive surface touched and no 'review' label — skipping review (add the 'review' label to force one)."
+          fi
+      - name: Checkout
+        if: env.HAS_KEY != '' && steps.gate.outputs.run == 'true'
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Adversarial review
-        if: env.HAS_KEY != ''
+        if: env.HAS_KEY != '' && steps.gate.outputs.run == 'true'
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
