@@ -1,17 +1,36 @@
 {
   "$schema-note": "Canonical surface-class routing (the drift detector, machine-readable). Every in-scope repo wears ONE of two type classes by JOB (not plumbing): 'editorial' (marketing/brand) or 'app' (product). One io navy+gold palette everywhere via tokens.css. The consumer drift-guard reads this to ENFORCE that a repo loads only the font families approved for its class, so the standard can't be violated silently. Prose + rationale live in the README and docs/ASTER_FLEET_TYPE_STANDARD_2026-07-17.md.",
-  "version": "0.3.1",
-  "ruling": "Fleet Type & Design Standard (architect 2026-07-17) — two classes by job, one io navy+gold palette. Supersedes the D1 'io-canon / Plex-everywhere' reading. v0.3.1 (2026-07-19): declares two approved deviations (aster-sports scoped Barlow 'broadcast'; st-patricks R6 rem-lift) — additive, no class/family/scale value changed.",
+  "version": "0.3.2",
+  "ruling": "Fleet Type & Design Standard (architect 2026-07-17) — two classes by job, one io navy+gold palette. Supersedes the D1 'io-canon / Plex-everywhere' reading. v0.3.1 (2026-07-19): declares two approved deviations (aster-sports scoped Barlow 'broadcast'; st-patricks R6 rem-lift) — additive, no class/family/scale value changed. v0.3.2 (2026-08-15): declares a THIRD approved deviation (aster-io scoped Bricolage/Geist 'night' front door) — additive, no class/family/scale value changed, and the editorial end-state for the rest of the surface is untouched.",
   "uniformSystem": {
-    "scalePx": [34, 24, 20, 17, 15, 12],
+    "scalePx": [
+      34,
+      24,
+      20,
+      17,
+      15,
+      12
+    ],
     "readableBodyFloorPx": 17,
     "denseCellMinPx": 15,
     "labelFloorPx": 12,
-    "weights": [400, 500, 600, 700],
+    "weights": [
+      400,
+      500,
+      600,
+      700
+    ],
     "numeric": "tabular-nums",
     "declareOnceInherit": true,
-    "smoothing": ["-webkit-font-smoothing: antialiased", "-moz-osx-font-smoothing: grayscale"],
-    "mobile": { "minTapTargetPx": 44, "formInputPx": 16, "viewport": "viewport-fit=cover" }
+    "smoothing": [
+      "-webkit-font-smoothing: antialiased",
+      "-moz-osx-font-smoothing: grayscale"
+    ],
+    "mobile": {
+      "minTapTargetPx": 44,
+      "formInputPx": 16,
+      "viewport": "viewport-fit=cover"
+    }
   },
   "classes": {
     "editorial": {
@@ -32,7 +51,10 @@
       "display": "Inter",
       "body": "Inter",
       "mono": "IBM Plex Mono",
-      "legibilityFeatures": ["cv05", "cv08"],
+      "legibilityFeatures": [
+        "cv05",
+        "cv08"
+      ],
       "roles": {
         "display": "--atk-app-display",
         "body": "--atk-app-body",
@@ -44,17 +66,34 @@
   "surfaces": {
     "aster-io": {
       "class": "editorial",
-      "repos": ["aster-io"],
-      "note": "The firm's storefront — the Editorial reference implementation. Target end-state = exactly 3 families (Instrument Serif, IBM Plex Sans, IBM Plex Mono)."
+      "repos": [
+        "aster-io"
+      ],
+      "note": "The firm's storefront — the Editorial reference implementation. Editorial end-state (Instrument Serif, IBM Plex Sans, IBM Plex Mono) holds everywhere EXCEPT the scoped 'night' front door — see scopedDeviations.",
+      "scopedDeviations": [
+        {
+          "name": "night",
+          "scope": ".night — the astersports.io front door only (client/src/styles/night.css)",
+          "display": "Bricolage Grotesque",
+          "body": "Geist",
+          "approved": true,
+          "approvedBy": "Frank 2026-08-15",
+          "note": "The storefront's job is different from the surfaces it links to. Instrument Serif is right for the parish site and the Hub — things people USE — but on the front door a literary serif argues against the claim that a Westchester studio builds real software. IBM Plex Mono is KEPT and is what carries the shared identity: it is why figures and statuses read as instrument panel across every surface. Scoped via .night; a consumer drift-guard honoring this MUST allow Bricolage Grotesque and Geist within that scope and continue to flag them anywhere OUTSIDE it. This is one surface leading, NOT a new estate standard — do not propagate to the other repos without a fresh ruling."
+        }
+      ]
     },
     "nova-select": {
       "class": "editorial",
-      "repos": ["nova-select"],
+      "repos": [
+        "nova-select"
+      ],
       "note": "Sales demo / showroom — classified by JOB (showcase), NOT by plumbing. It runs on real app components (app-style UI is expected); do NOT strip its demo richness toward a bare tool."
     },
     "aster-sports": {
       "class": "app",
-      "repos": ["aster-sports"],
+      "repos": [
+        "aster-sports"
+      ],
       "scopedDeviations": [
         {
           "name": "broadcast",
@@ -70,12 +109,16 @@
     },
     "aster-studio": {
       "class": "app",
-      "repos": ["aster-studio"],
+      "repos": [
+        "aster-studio"
+      ],
       "note": "Print Studio — a tool, whole repo App-clean per Frank (Join/Billing included). Money repo: token/type wiring is presentational only."
     },
     "st-patricks-armonk": {
       "class": "app+parish-deviation",
-      "repos": ["st-patricks-armonk"],
+      "repos": [
+        "st-patricks-armonk"
+      ],
       "deviation": {
         "headings": "Fraunces",
         "palette": "parish (client brand — NOT io navy/gold)",
