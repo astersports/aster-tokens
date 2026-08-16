@@ -24,8 +24,8 @@ Consumed as a **public cross-repo dependency** (same mechanism as `@aster/weathe
 | `surface-tertiary` | `#EAE7DF` | tertiary surface |
 | `ink` | `#0B1B3B` | primary text |
 | `text-secondary` | `#4A5568` | secondary text |
-| `text-muted` | `#6B7488` | AA text-rank floor |
-| `text-tertiary` | `#8896AB` | non-text only (icons, dividers) |
+| `text-muted` | `#6B7488` | AA body on `ground` (4.53:1) and `panel` (4.69:1) **only** |
+| `text-tertiary` | `#8896AB` | **dividers only** — misses the 3:1 icon floor on 4 of 5 grounds |
 | `border` | `#E6E4DC` | hairline |
 | `border-subtle` | `#EDEAE2` | subtle hairline |
 | `text-on-dark` | `#F5F0E8` | cream text over navy |
@@ -34,9 +34,63 @@ Consumed as a **public cross-repo dependency** (same mechanism as `@aster/weathe
 | `navy-legacy` | `#151525` | **DEPRECATED** — migrate post-R2, not mid-pilot |
 | `gold` | `#C9952E` | accent, small fills |
 | `gold-hi` | `#D4A843` | accent hover / highlight |
-| `gold-text` | `#8F6708` | gold text on light (AA 6.8:1) |
+| `gold-text` | `#8F6708` | gold **text** on light — AA 4.94:1 on `ground` |
 | `gold-tint` | `#F4E9CF` | soft gold background |
-| `brass` | `#B9871F` | gold on light UI (AA 4.6:1) |
+| `brass` | `#B9871F` | **dark-ground text.** On light: **3.10:1** — non-text UI only, never body |
+
+### Brass is not a light-UI text colour
+
+`brass` was documented as `AA 4.6:1` [withdrawn] on light. It is not, and never was — it measures
+**3.10:1** on `ground` (`#FCFBF9`) and **3.21:1** on `panel`. Both clear the **3:1**
+floor for non-text UI (icons, borders, large text) and both **fail the 4.5:1 body-text
+floor**. On the tinted and secondary surfaces it fails even 3:1 — `surface-secondary`
+2.79:1, `surface-tertiary` 2.60:1, `gold-tint` 2.66:1 — so on those grounds it is not
+usable for anything. `panel-hover` is 3.02:1: non-text only, and with no margin.
+
+**A second trap in the same family:** `gold-text` on `gold-tint` — the canonical gold text
+on the canonical gold background — is **4.23:1**, below the 4.5 body floor. That pairing
+looks obviously correct and is not. Use `ink` on `gold-tint` (14.1:1) for body copy inside
+a gold panel.
+
+Where brass *does* pass AA is on navy, which is what it is for: **4.73:1** on `navy-ui`,
+**5.67:1** on `navy-night`. (A `5.62:1` [withdrawn] figure in circulation was measured
+against `navy-legacy`, the **deprecated** navy — arithmetically correct, but computed on
+the one navy new work is told not to adopt.)
+
+**For gold text on a light ground, use `gold-text` (`#8F6708`, 4.94:1).** Note that
+`gold-text` was itself documented as `6.8:1` [withdrawn]; it clears AA, but the published
+figure was overstated. Both claims are now re-measured in CI — see below.
+
+### The two grey text tokens were mis-documented the same way
+
+`text-muted` read **`AA text-rank floor`** — an AA claim with **no ground named and no
+number at all**. It holds on two grounds and fails on three:
+
+| ground | `text-muted` | verdict |
+|---|---|---|
+| `ground` `#FCFBF9` | 4.53:1 | AA ✓ |
+| `panel` `#FFFFFF` | 4.69:1 | AA ✓ |
+| `surface-secondary` `#F1EFE9` | **4.08:1** | below AA |
+| `gold-tint` `#F4E9CF` | **3.89:1** | below AA |
+| `surface-tertiary` `#EAE7DF` | **3.79:1** | below AA |
+
+On those three, use **`text-secondary` (`#4A5568`)** — it clears AA on every ground in the
+package (6.09:1 at worst).
+
+`text-tertiary` read **`non-text only: icons, dividers`**. Dividers are decorative and carry
+no floor, but a **meaningful icon needs 3:1**, and it measures 2.90:1 on `ground`, 2.61:1 /
+2.49:1 / 2.43:1 on the other light surfaces, and exactly 3.00:1 on `panel`. So it is a
+divider colour; icons that carry meaning need `text-secondary`.
+
+### Why a prose claim is the worse failure
+
+`AA text-rank floor` survived far longer than a wrong ratio would have, because there was
+no number in it to check. **A contrast claim without a figure is not a weaker claim — it is
+an unfalsifiable one.** `contrast-guard.mjs` now rejects any comment in `tokens.css` that
+says `AA`/`AAA` without carrying a figure the guard itself computed.
+
+Every `N:1` in this README and in `tokens.css` is re-derived from the hex by
+`scripts/contrast-guard.mjs` on every PR. Do not hand-edit a ratio.
 
 **Navy is role-split** (architect ruling 2026-07-16): don't pick one winner. `navy-ui`
 (`#12244D`) is the interactive/UI navy; `navy-night` (`#0A1430`) is the night surface;
@@ -74,7 +128,7 @@ Editorial class is `normal` (explicit, so the guard asserts the *negative*).
 
 | Repo | Class | Note |
 |---|---|---|
-| aster-io | Editorial | The firm's storefront; Editorial reference. |
+| aster-io | Editorial | The firm's storefront; Editorial reference. **Scoped `storefront` deviation: body face is Figtree on `.ah`.** Display and mono unchanged. |
 | nova-select | Editorial | Sales demo/showroom — classified by *job*, not plumbing. |
 | aster-sports (Hub) | App-clean | Flagship; half of the Hub↔App P0 invariant. |
 | aster-studio | App-clean | Whole repo (Join/Billing included). |

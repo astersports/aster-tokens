@@ -1,5 +1,9 @@
 /**
- * @aster/tokens — CANONICAL Aster design tokens (v0.3.1).
+ * @aster/tokens — CANONICAL Aster design tokens (v0.4.0).
+ *
+ * CONTRAST FIGURES IN THIS FILE ARE ENFORCED. Every "N:1" claim in a comment is
+ * re-measured against the named ground by scripts/contrast-guard.mjs in CI. Do not
+ * hand-edit a ratio; change the value and let the guard print the real one.
  *
  * One light palette for EVERY Aster-branded surface (.io, Hub/App, Print Studio,
  * Nova Select). Values-only: no components, no runtime dependencies. Change a
@@ -21,8 +25,17 @@
   --atk-surface-tertiary:  #EAE7DF;
   --atk-ink:               #0B1B3B; /* primary text */
   --atk-text-secondary:    #4A5568;
-  --atk-text-muted:        #6B7488; /* AA text-rank floor */
-  --atk-text-tertiary:     #8896AB; /* non-text only: icons, dividers */
+  /* AA body on --atk-ground (4.53:1) and --atk-panel (4.69:1) ONLY. It is BELOW AA on the
+     other surfaces — --atk-surface-secondary 4.08:1, --atk-gold-tint 3.89:1,
+     --atk-surface-tertiary 3.79:1. Use --atk-text-secondary there (>=6.09:1 on every
+     ground). "AA text-rank floor" without a ground was the old comment and it was false. */
+  --atk-text-muted:        #6B7488;
+  /* NON-TEXT ONLY, and it does not clear the 3:1 icon floor on most grounds: 2.90:1 on
+     --atk-ground, 2.61:1 / 2.49:1 / 2.43:1 on secondary / gold-tint / tertiary, and exactly
+     3.00:1 on --atk-panel. Decorative dividers are exempt from a contrast floor; an icon
+     that CARRIES MEANING needs 3:1, so use --atk-text-secondary for those. The old comment
+     said "icons, dividers" and overclaimed on four of five grounds. */
+  --atk-text-tertiary:     #8896AB;
   --atk-border:            #E6E4DC;
   --atk-border-subtle:     #EDEAE2;
   --atk-text-on-dark:      #F5F0E8; /* cream text over any navy */
@@ -35,7 +48,13 @@
   /* ─── Gold (accent — gold = achievement/accent, never act-now amber) ─── */
   --atk-gold:      #C9952E; /* accent, small fills */
   --atk-gold-hi:   #D4A843; /* accent hover / highlight */
-  --atk-gold-text: #8F6708; /* gold TEXT on light (WCAG AA 6.8:1) */
+  --atk-gold-text: #8F6708; /* gold TEXT on light — AA 4.94:1 on --atk-ground (was 6.8:1 [withdrawn]) */
   --atk-gold-tint: #F4E9CF; /* soft gold background */
-  --atk-brass:     #B9871F; /* gold on light UI / small icons (AA 4.6:1) */
+  /* DARK-GROUND TEXT COLOUR. On light it is 3.10:1 (--atk-ground) / 3.21:1 (--atk-panel):
+     valid ONLY for >=3:1 non-text UI — icons, borders, large text. NEVER body text on
+     light. On the tinted/secondary surfaces it drops below 3:1 and is not usable at all
+     (--atk-surface-secondary 2.79:1, --atk-gold-tint 2.66:1, --atk-surface-tertiary
+     2.60:1). For gold body text on light use --atk-gold-text. Passes AA on navy:
+     4.73:1 (--atk-navy-ui) / 5.67:1 (--atk-navy-night). */
+  --atk-brass:     #B9871F;
 }

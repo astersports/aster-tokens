@@ -19,9 +19,11 @@ const IO_LINK =
   '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@400&family=Instrument+Serif:ital@0;1&display=swap">';
 
 test("approved family set is the class families + declared deviations", () => {
-  // aster-io editorial base + the scoped "night" front-door deviation (v0.3.2)
+  // aster-io editorial base + the scoped "storefront" body-face deviation (v0.3.3).
+  // Figtree is the ONLY addition: display and mono are unchanged from the class, so they
+  // appear once, not twice.
   assert.deepEqual(approvedFamiliesForSurface("aster-io").allowed.sort(),
-    ["Bricolage Grotesque", "Geist", "IBM Plex Mono", "IBM Plex Sans", "Instrument Serif"]);
+    ["Figtree", "IBM Plex Mono", "IBM Plex Sans", "Instrument Serif"]);
   // the base three are still REQUIRED — a deviation adds, it never replaces
   assert.deepEqual(approvedFamiliesForSurface("aster-io").required.sort(),
     ["IBM Plex Mono", "IBM Plex Sans", "Instrument Serif"]);
@@ -37,8 +39,22 @@ test("approved family set is the class families + declared deviations", () => {
   // to prevent.
   for (const other of ["aster-sports", "aster-studio", "nova-select", "st-patricks-armonk"]) {
     const a = approvedFamiliesForSurface(other).allowed;
-    assert.ok(!a.includes("Bricolage Grotesque"), `${other} must not inherit Bricolage`);
-    assert.ok(!a.includes("Geist"), `${other} must not inherit Geist`);
+    assert.ok(!a.includes("Figtree"), `${other} must not inherit Figtree`);
+  }
+});
+
+/* A RETIRED DEVIATION MUST ACTUALLY NARROW THE ALLOWLIST.
+   'night' (Bricolage Grotesque + Geist) was withdrawn on 2026-08-16 when that front door
+   was reverted and night.css deleted. Removing a deviation is the only operation here that
+   REMOVES permission, so it is the only one that can silently leave a face renderable with
+   nothing sanctioning it. This asserts the retirement took, everywhere. */
+test("a retired deviation's faces are approved for NO surface", () => {
+  const surfaces = ["aster-io", "aster-sports", "aster-studio", "nova-select", "st-patricks-armonk"];
+  for (const face of ["Bricolage Grotesque", "Geist"]) {
+    for (const s of surfaces) {
+      assert.ok(!approvedFamiliesForSurface(s).allowed.includes(face),
+        `retired face "${face}" is still approved for ${s}`);
+    }
   }
 });
 
