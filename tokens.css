@@ -1,5 +1,9 @@
 /**
- * @aster/tokens — CANONICAL Aster design tokens (v0.3.1).
+ * @aster/tokens — CANONICAL Aster design tokens (v0.3.3).
+ *
+ * CONTRAST FIGURES IN THIS FILE ARE ENFORCED. Every "N:1" claim in a comment is
+ * re-measured against the named ground by scripts/contrast-guard.mjs in CI. Do not
+ * hand-edit a ratio; change the value and let the guard print the real one.
  *
  * One light palette for EVERY Aster-branded surface (.io, Hub/App, Print Studio,
  * Nova Select). Values-only: no components, no runtime dependencies. Change a
@@ -35,7 +39,12 @@
   /* ─── Gold (accent — gold = achievement/accent, never act-now amber) ─── */
   --atk-gold:      #C9952E; /* accent, small fills */
   --atk-gold-hi:   #D4A843; /* accent hover / highlight */
-  --atk-gold-text: #8F6708; /* gold TEXT on light (WCAG AA 6.8:1) */
+  --atk-gold-text: #8F6708; /* gold TEXT on light — AA 4.94:1 on --atk-ground (was 6.8:1 [withdrawn]) */
   --atk-gold-tint: #F4E9CF; /* soft gold background */
-  --atk-brass:     #B9871F; /* gold on light UI / small icons (AA 4.6:1) */
+  /* DARK-GROUND TEXT COLOUR. On light it is 3.10:1 (--atk-ground) / 3.21:1 (--atk-panel):
+     valid ONLY for >=3:1 non-text UI — icons, borders, large text. NEVER body text on
+     light. On the tinted/secondary surfaces it drops below 3:1 and is not usable at all
+     (#F1EFE9 2.79, #FBF3DC 2.89, #EAE7DF 2.60). For gold body text on light use
+     --atk-gold-text. Passes AA on navy: 4.73 (navy-ui) / 5.67 (navy-night). */
+  --atk-brass:     #B9871F;
 }

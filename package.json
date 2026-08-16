@@ -1,6 +1,6 @@
 {
   "name": "@aster/tokens",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Canonical Aster design tokens + type — one light palette and one type system for every Aster-branded surface. Values-only: no components, no runtime dependencies.",
   "type": "module",
   "license": "UNLICENSED",
@@ -41,6 +41,7 @@
   ],
   "scripts": {
     "drift-guard": "node scripts/drift-guard.mjs",
+    "contrast-guard": "node scripts/contrast-guard.mjs",
     "test": "node --test scripts/consumer-guard.test.mjs"
   }
 }

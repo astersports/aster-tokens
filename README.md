@@ -34,9 +34,35 @@ Consumed as a **public cross-repo dependency** (same mechanism as `@aster/weathe
 | `navy-legacy` | `#151525` | **DEPRECATED** — migrate post-R2, not mid-pilot |
 | `gold` | `#C9952E` | accent, small fills |
 | `gold-hi` | `#D4A843` | accent hover / highlight |
-| `gold-text` | `#8F6708` | gold text on light (AA 6.8:1) |
+| `gold-text` | `#8F6708` | gold **text** on light — AA 4.94:1 on `ground` |
 | `gold-tint` | `#F4E9CF` | soft gold background |
-| `brass` | `#B9871F` | gold on light UI (AA 4.6:1) |
+| `brass` | `#B9871F` | **dark-ground text.** On light: **3.10:1** — non-text UI only, never body |
+
+### Brass is not a light-UI text colour
+
+`brass` was documented as `AA 4.6:1` [withdrawn] on light. It is not, and never was — it measures
+**3.10:1** on `ground` (`#FCFBF9`) and **3.21:1** on `panel`. Both clear the **3:1**
+floor for non-text UI (icons, borders, large text) and both **fail the 4.5:1 body-text
+floor**. On the tinted and secondary surfaces it fails even 3:1 — `surface-secondary`
+2.79:1, `surface-tertiary` 2.60:1, `gold-tint` 2.66:1 — so on those grounds it is not
+usable for anything. `panel-hover` is 3.02:1: non-text only, and with no margin.
+
+**A second trap in the same family:** `gold-text` on `gold-tint` — the canonical gold text
+on the canonical gold background — is **4.23:1**, below the 4.5 body floor. That pairing
+looks obviously correct and is not. Use `ink` on `gold-tint` (14.1:1) for body copy inside
+a gold panel.
+
+Where brass *does* pass AA is on navy, which is what it is for: **4.73:1** on `navy-ui`,
+**5.67:1** on `navy-night`. (A `5.62:1` [withdrawn] figure in circulation was measured
+against `navy-legacy`, the **deprecated** navy — arithmetically correct, but computed on
+the one navy new work is told not to adopt.)
+
+**For gold text on a light ground, use `gold-text` (`#8F6708`, 4.94:1).** Note that
+`gold-text` was itself documented as `6.8:1` [withdrawn]; it clears AA, but the published
+figure was overstated. Both claims are now re-measured in CI — see below.
+
+Every `N:1` in this README and in `tokens.css` is re-derived from the hex by
+`scripts/contrast-guard.mjs` on every PR. Do not hand-edit a ratio.
 
 **Navy is role-split** (architect ruling 2026-07-16): don't pick one winner. `navy-ui`
 (`#12244D`) is the interactive/UI navy; `navy-night` (`#0A1430`) is the night surface;
