@@ -128,7 +128,7 @@ Editorial class is `normal` (explicit, so the guard asserts the *negative*).
 
 | Repo | Class | Note |
 |---|---|---|
-| aster-io | Editorial | The firm's storefront; Editorial reference. |
+| aster-io | Editorial | The firm's storefront; Editorial reference. **Scoped `storefront` deviation: body face is Figtree on `.ah`.** Display and mono unchanged. |
 | nova-select | Editorial | Sales demo/showroom — classified by *job*, not plumbing. |
 | aster-sports (Hub) | App-clean | Flagship; half of the Hub↔App P0 invariant. |
 | aster-studio | App-clean | Whole repo (Join/Billing included). |

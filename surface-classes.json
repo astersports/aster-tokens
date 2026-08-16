@@ -1,7 +1,7 @@
 {
   "$schema-note": "Canonical surface-class routing (the drift detector, machine-readable). Every in-scope repo wears ONE of two type classes by JOB (not plumbing): 'editorial' (marketing/brand) or 'app' (product). One io navy+gold palette everywhere via tokens.css. The consumer drift-guard reads this to ENFORCE that a repo loads only the font families approved for its class, so the standard can't be violated silently. Prose + rationale live in the README and docs/ASTER_FLEET_TYPE_STANDARD_2026-07-17.md.",
   "version": "0.3.2",
-  "ruling": "Fleet Type & Design Standard (architect 2026-07-17) — two classes by job, one io navy+gold palette. Supersedes the D1 'io-canon / Plex-everywhere' reading. v0.3.1 (2026-07-19): declares two approved deviations (aster-sports scoped Barlow 'broadcast'; st-patricks R6 rem-lift) — additive, no class/family/scale value changed. v0.3.2 (2026-08-15): declares a THIRD approved deviation (aster-io scoped Bricolage/Geist 'night' front door) — additive, no class/family/scale value changed, and the editorial end-state for the rest of the surface is untouched.",
+  "ruling": "Fleet Type & Design Standard (architect 2026-07-17) — two classes by job, one io navy+gold palette. Supersedes the D1 'io-canon / Plex-everywhere' reading. v0.3.1 (2026-07-19): declares two approved deviations (aster-sports scoped Barlow 'broadcast'; st-patricks R6 rem-lift) — additive, no class/family/scale value changed. v0.3.2 (2026-08-15): declares a THIRD approved deviation (aster-io scoped Bricolage/Geist 'night' front door) — additive, no class/family/scale value changed, and the editorial end-state for the rest of the surface is untouched. v0.3.3 (2026-08-16): RETIRES the 'night' deviation and replaces it with 'storefront'. The night front door was reverted on 2026-08-16 and night.css deleted, so that deviation had zero consumers and its scope string named a file that no longer exists. It is removed rather than repurposed: its approvedBy stamp (Frank 2026-08-15) approved Bricolage+Geist for a DARK front door that was withdrawn the next day, and carrying that stamp onto a different decision would make this file — the one artifact every repo reads to learn what is sanctioned — assert an approval that was never given. 'storefront' is a new deviation with its own scope, faces, rationale and date: aster-io's body face only, Instrument Serif and IBM Plex Mono unchanged. Removing 'night' NARROWS the allowlist (drops Bricolage Grotesque and Geist); verified safe — no stylesheet, link tag or component in any of the six repos renders either face.",
   "uniformSystem": {
     "scalePx": [
       34,
@@ -69,16 +69,17 @@
       "repos": [
         "aster-io"
       ],
-      "note": "The firm's storefront — the Editorial reference implementation. Editorial end-state (Instrument Serif, IBM Plex Sans, IBM Plex Mono) holds everywhere EXCEPT the scoped 'night' front door — see scopedDeviations.",
+      "note": "The firm's storefront — the Editorial reference implementation. Editorial end-state (Instrument Serif, IBM Plex Sans, IBM Plex Mono) holds everywhere EXCEPT the body face on the marketing surface itself — see scopedDeviations.",
       "scopedDeviations": [
         {
-          "name": "night",
-          "scope": ".night — the astersports.io front door only (client/src/styles/night.css)",
-          "display": "Bricolage Grotesque",
-          "body": "Geist",
+          "name": "storefront",
+          "scope": ".ah — the astersports.io marketing surface (client/src/styles/home.css + register.css)",
+          "display": "Instrument Serif",
+          "body": "Figtree",
+          "mono": "IBM Plex Mono",
           "approved": true,
-          "approvedBy": "Frank 2026-08-15",
-          "note": "The storefront's job is different from the surfaces it links to. Instrument Serif is right for the parish site and the Hub — things people USE — but on the front door a literary serif argues against the claim that a Westchester studio builds real software. IBM Plex Mono is KEPT and is what carries the shared identity: it is why figures and statuses read as instrument panel across every surface. Scoped via .night; a consumer drift-guard honoring this MUST allow Bricolage Grotesque and Geist within that scope and continue to flag them anywhere OUTSIDE it. This is one surface leading, NOT a new estate standard — do not propagate to the other repos without a fresh ruling."
+          "approvedBy": "Frank 2026-08-16",
+          "note": "BODY FACE ONLY. Display stays Instrument Serif and mono stays IBM Plex Mono — both unchanged from the editorial class, and the mono is KEPT deliberately: it is what makes figures and statuses read as instrument panel across every surface, which is the one part of the withdrawn 'night' rationale that was right on its own merits. WHY: the three editorial faces are individually excellent and uniformly cold, and Instrument Serif + IBM Plex has become the default free pairing — it signals good taste and no identity. The product is Saturday mornings in a gym. Swapping the body sans is the most-used voice on the page and so the largest change per unit of churn; the display serif is the brand signature with a cross-repo blast radius and is deliberately NOT touched here. Figtree is on Google Fonts, so this stays off the R5 self-hosting path entirely. Explicitly NOT Inter: it is the category default and would make the page more generic, not less. Explicitly NOT Geist: it was allowlisted by the withdrawn 'night' deviation and choosing it would let the typeface be picked by what was cheapest to permit rather than what the page needs. This is one surface leading, NOT a new estate standard — do not propagate to the other repos without a fresh ruling."
         }
       ]
     },
