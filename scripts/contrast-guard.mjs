@@ -63,17 +63,41 @@ const CANON = [
   // gold / gold-hi are fills and dark-ground text — never light-ground text.
   { fg: "#C9952E", bg: "#12244D", was: "gold on navy-ui", role: "body", ratio: 5.65 },
   { fg: "#D4A843", bg: "#12244D", was: "gold-hi on navy-ui", role: "body", ratio: 6.84 },
+
+  // text-muted holds AA on exactly two grounds. Named, so the claim can never float again.
+  { fg: "#6B7488", bg: "#FCFBF9", was: "text-muted on ground", role: "body", ratio: 4.53 },
+  { fg: "#6B7488", bg: "#FFFFFF", was: "text-muted on panel", role: "body", ratio: 4.69 },
+  { fg: "#8896AB", bg: "#FFFFFF", was: "text-tertiary on panel", role: "ui", ratio: 3.0 },
+
+  // the replacement the docs now point at — pinned so the advice cannot rot.
+  { fg: "#4A5568", bg: "#EAE7DF", was: "text-secondary on surface-tertiary", role: "body", ratio: 6.09 },
+  { fg: "#4A5568", bg: "#F4E9CF", was: "text-secondary on gold-tint", role: "body", ratio: 6.24 },
 ];
 
-/* Pairs that are BELOW every floor and must stay documented as unusable. Listing them
-   here asserts they really are that bad — if a hex moves and one becomes usable, this
-   fails and the docs get revisited rather than silently under-claiming. */
-const UNUSABLE = [
-  { fg: "#B9871F", bg: "#F1EFE9", was: "brass on surface-secondary", ratio: 2.79 },
-  { fg: "#B9871F", bg: "#EAE7DF", was: "brass on surface-tertiary", ratio: 2.6 },
-  { fg: "#B9871F", bg: "#F4E9CF", was: "brass on gold-tint", ratio: 2.66 },
-  { fg: "#C9952E", bg: "#FCFBF9", was: "gold on ground", ratio: 2.6 },
-  { fg: "#D4A843", bg: "#FCFBF9", was: "gold-hi on ground", ratio: 2.14 },
+/* Pairs the docs assert are BELOW a floor. `under` is the ceiling the pair must stay
+   beneath — 3 for "not usable at all", 4.5 for "clears the UI floor but is not body-safe".
+   Listing them asserts they really are that bad: if a hex moves and one quietly becomes
+   usable, this fails and the docs get revisited rather than silently under-claiming.
+   The inverse of CANON, and the half a floor-only guard cannot see. */
+const BELOW = [
+  { fg: "#B9871F", bg: "#F1EFE9", was: "brass on surface-secondary", ratio: 2.79, under: 3 },
+  { fg: "#B9871F", bg: "#EAE7DF", was: "brass on surface-tertiary", ratio: 2.6, under: 3 },
+  { fg: "#B9871F", bg: "#F4E9CF", was: "brass on gold-tint", ratio: 2.66, under: 3 },
+  { fg: "#C9952E", bg: "#FCFBF9", was: "gold on ground", ratio: 2.6, under: 3 },
+  { fg: "#D4A843", bg: "#FCFBF9", was: "gold-hi on ground", ratio: 2.14, under: 3 },
+
+  /* text-muted was documented "AA text-rank floor" with no ground named. It holds on two
+     grounds and fails on three — the defect this list exists to make un-writable. */
+  { fg: "#6B7488", bg: "#F1EFE9", was: "text-muted on surface-secondary", ratio: 4.08, under: 4.5 },
+  { fg: "#6B7488", bg: "#F4E9CF", was: "text-muted on gold-tint", ratio: 3.89, under: 4.5 },
+  { fg: "#6B7488", bg: "#EAE7DF", was: "text-muted on surface-tertiary", ratio: 3.79, under: 4.5 },
+
+  /* text-tertiary said "icons, dividers". A meaningful icon needs 3:1; it misses on four
+     of five grounds. Dividers are decorative and carry no floor. */
+  { fg: "#8896AB", bg: "#FCFBF9", was: "text-tertiary on ground", ratio: 2.9, under: 3 },
+  { fg: "#8896AB", bg: "#F1EFE9", was: "text-tertiary on surface-secondary", ratio: 2.61, under: 3 },
+  { fg: "#8896AB", bg: "#F4E9CF", was: "text-tertiary on gold-tint", ratio: 2.49, under: 3 },
+  { fg: "#8896AB", bg: "#EAE7DF", was: "text-tertiary on surface-tertiary", ratio: 2.43, under: 3 },
 ];
 
 let failed = 0;
@@ -90,14 +114,16 @@ for (const c of CANON) {
     fail(`BELOW FLOOR: ${c.was} = ${got}:1, but role "${c.role}" requires >=${floor}:1`);
   }
 }
-for (const c of UNUSABLE) {
+for (const c of BELOW) {
   const got = r2(ratio(c.fg, c.bg));
   if (got !== c.ratio) fail(`STALE FIGURE: ${c.was} is documented ${c.ratio}:1 but measures ${got}:1`);
-  if (got >= 3) fail(`${c.was} = ${got}:1 now clears 3:1 — it is listed as unusable; re-document it`);
+  if (got >= c.under) {
+    fail(`${c.was} = ${got}:1 now clears ${c.under}:1 — the docs say it does not; re-document it`);
+  }
 }
 
 /* ── 3. no undeclared or stale ratio may appear in the docs ────────────── */
-const COMPUTED = new Set([...CANON, ...UNUSABLE].map((c) => r2(ratio(c.fg, c.bg)).toFixed(2)));
+const COMPUTED = new Set([...CANON, ...BELOW].map((c) => r2(ratio(c.fg, c.bg)).toFixed(2)));
 const THRESHOLDS = new Set(["3.00", "4.50", "7.00"]);
 for (const file of ["../tokens.css", "../README.md"]) {
   const text = read(file);
@@ -115,11 +141,34 @@ for (const file of ["../tokens.css", "../README.md"]) {
   });
 }
 
+/* ── 4. an AA claim in PROSE must carry a measured figure ──────────────────
+   The defect this exists for: `--atk-text-muted: #6B7488; /* AA text-rank floor *␘/`
+   shipped for months. Assertion 3 never saw it — it matches `N:1`, and that comment has
+   no digits at all. But "AA text-rank floor" reads exactly as authoritative as "4.5:1",
+   and it was false on three of five grounds.
+   So: every comment block in tokens.css that says AA (or AAA) must also carry a figure
+   this guard computed. A contrast claim without a number is not a weaker claim — it is
+   an unfalsifiable one, which is worse. */
+const AA_WORD = /\bAAA?\b/;
+const RATIO_IN = /(\d+(?:\.\d+)?):1/g;
+for (const [, block] of read("../tokens.css").matchAll(/\/\*([\s\S]*?)\*\//g)) {
+  if (!AA_WORD.test(block)) continue;
+  const figures = [...block.matchAll(RATIO_IN)].map((m) => Number(m[1]).toFixed(2));
+  if (!figures.some((n) => COMPUTED.has(n))) {
+    const first = block.trim().split("\n")[0].trim().slice(0, 68);
+    fail(
+      `UNFALSIFIABLE AA CLAIM in tokens.css — "${first}…" asserts AA in prose but carries ` +
+        `no figure this guard measured. Name the ground and the ratio, or drop the claim.`,
+    );
+  }
+}
+
 if (failed) {
   console.error(`\n✗ ${failed} contrast problem(s).`);
   process.exit(1);
 }
 console.log(
   `✓ contrast holds — ${CANON.length} approved pairs re-measured, ` +
-    `${UNUSABLE.length} confirmed unusable, every documented ratio matches.`,
+    `${BELOW.length} asserted below a floor, every documented ratio matches, ` +
+    `no unfalsifiable AA claims.`,
 );

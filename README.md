@@ -24,8 +24,8 @@ Consumed as a **public cross-repo dependency** (same mechanism as `@aster/weathe
 | `surface-tertiary` | `#EAE7DF` | tertiary surface |
 | `ink` | `#0B1B3B` | primary text |
 | `text-secondary` | `#4A5568` | secondary text |
-| `text-muted` | `#6B7488` | AA text-rank floor |
-| `text-tertiary` | `#8896AB` | non-text only (icons, dividers) |
+| `text-muted` | `#6B7488` | AA body on `ground` (4.53:1) and `panel` (4.69:1) **only** |
+| `text-tertiary` | `#8896AB` | **dividers only** — misses the 3:1 icon floor on 4 of 5 grounds |
 | `border` | `#E6E4DC` | hairline |
 | `border-subtle` | `#EDEAE2` | subtle hairline |
 | `text-on-dark` | `#F5F0E8` | cream text over navy |
@@ -60,6 +60,34 @@ the one navy new work is told not to adopt.)
 **For gold text on a light ground, use `gold-text` (`#8F6708`, 4.94:1).** Note that
 `gold-text` was itself documented as `6.8:1` [withdrawn]; it clears AA, but the published
 figure was overstated. Both claims are now re-measured in CI — see below.
+
+### The two grey text tokens were mis-documented the same way
+
+`text-muted` read **`AA text-rank floor`** — an AA claim with **no ground named and no
+number at all**. It holds on two grounds and fails on three:
+
+| ground | `text-muted` | verdict |
+|---|---|---|
+| `ground` `#FCFBF9` | 4.53:1 | AA ✓ |
+| `panel` `#FFFFFF` | 4.69:1 | AA ✓ |
+| `surface-secondary` `#F1EFE9` | **4.08:1** | below AA |
+| `gold-tint` `#F4E9CF` | **3.89:1** | below AA |
+| `surface-tertiary` `#EAE7DF` | **3.79:1** | below AA |
+
+On those three, use **`text-secondary` (`#4A5568`)** — it clears AA on every ground in the
+package (6.09:1 at worst).
+
+`text-tertiary` read **`non-text only: icons, dividers`**. Dividers are decorative and carry
+no floor, but a **meaningful icon needs 3:1**, and it measures 2.90:1 on `ground`, 2.61:1 /
+2.49:1 / 2.43:1 on the other light surfaces, and exactly 3.00:1 on `panel`. So it is a
+divider colour; icons that carry meaning need `text-secondary`.
+
+### Why a prose claim is the worse failure
+
+`AA text-rank floor` survived far longer than a wrong ratio would have, because there was
+no number in it to check. **A contrast claim without a figure is not a weaker claim — it is
+an unfalsifiable one.** `contrast-guard.mjs` now rejects any comment in `tokens.css` that
+says `AA`/`AAA` without carrying a figure the guard itself computed.
 
 Every `N:1` in this README and in `tokens.css` is re-derived from the hex by
 `scripts/contrast-guard.mjs` on every PR. Do not hand-edit a ratio.
