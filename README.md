@@ -378,7 +378,7 @@ retiring a font family) · *major* = a removed or renamed token.
 > branch `chore/figtree-repin`; its `main` is still on v0.3.2."* **That branch merged**
 > (aster-io #180). Read the pin from the consumer's own `origin/main`, never from this
 > table — it has now gone stale twice, which is what a snapshot in two files does.
-> See [`docs/KNOWN_GAPS_AND_PINS.md`](docs/KNOWN_GAPS_AND_PINS.md).
+> The guard gaps this table interacts with are §4 above.
 
 ### Releases
 
