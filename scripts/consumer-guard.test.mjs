@@ -6,6 +6,7 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
   approvedFamiliesForSurface,
   extractLoadedFamilies,
@@ -14,6 +15,11 @@ import {
   assertBindings,
   assertConsumerDrift,
 } from "../consumer-guard.js";
+
+/* Read the contract the same way consumer-guard.js does (no import-attributes dependency). */
+const surfaceClasses = JSON.parse(
+  readFileSync(new URL("../surface-classes.json", import.meta.url), "utf8"),
+);
 
 const IO_LINK =
   '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@400&family=Instrument+Serif:ital@0;1&display=swap">';
@@ -92,6 +98,56 @@ test("HOLE 2 — 'Interstate' does not false-match the 'Inter' family", () => {
 test("scope: Barlow is allowed for aster-sports, forbidden for aster-io", () => {
   assert.deepEqual(assertNoForbiddenFaces("aster-sports", ':root{ --bc: "Barlow Condensed"; }'), []);
   assert.ok(assertNoForbiddenFaces("aster-io", ':root{ --x: "Barlow Condensed"; }').length > 0);
+});
+
+/* ⚑ REGRESSION — THE FLEET_FACES OMISSION (fixed 2026-08-17).
+   `Figtree` was declared as aster-io's approved `storefront` body face in
+   surface-classes.json (v0.4.0) but never added to FLEET_FACES in consumer-guard.js.
+   `assertNoForbiddenFaces` iterates FLEET_FACES, so an unlisted face is INVISIBLE to it:
+   before the fix, `assertNoForbiddenFaces("aster-sports", "font-family:'Figtree'")`
+   returned [] — a clean pass on a face approved for exactly one other repo.
+   Reverting the FLEET_FACES line fails the first assertion below.
+
+   This is the general hazard, not a Figtree quirk: declaring a face APPROVED somewhere
+   does not make it FORBIDDEN elsewhere unless the face is also in the scan's candidate
+   set. Every face added to surface-classes.json must be added to FLEET_FACES too. */
+test("a face approved for ONE surface is forbidden — and detectable — on the others", () => {
+  for (const other of ["aster-sports", "aster-studio", "nova-select", "st-patricks-armonk"]) {
+    const fails = assertNoForbiddenFaces(other, ":root{ --body: 'Figtree', sans-serif; }");
+    assert.ok(
+      fails.some((f) => /forbidden "Figtree"/.test(f)),
+      `${other} must FLAG a Figtree leak — it is approved only for aster-io's storefront scope`,
+    );
+  }
+  // and it stays clean where it is genuinely approved
+  assert.deepEqual(assertNoForbiddenFaces("aster-io", ":root{ --body: 'Figtree', sans-serif; }"), []);
+});
+
+/* Every face named anywhere in the contract must be scannable. This is the fence that
+   stops the omission recurring for the NEXT deviation rather than only for Figtree. */
+test("every face in surface-classes.json is in the forbidden-scan candidate set", () => {
+  const declared = new Set();
+  for (const cls of Object.values(surfaceClasses.classes ?? {})) {
+    for (const f of [cls.display, cls.body, cls.mono]) if (f) declared.add(f);
+  }
+  for (const s of Object.values(surfaceClasses.surfaces ?? {})) {
+    if (s.deviation?.headings) declared.add(s.deviation.headings);
+    for (const d of s.scopedDeviations ?? []) {
+      for (const f of [d.display, d.body, d.mono]) if (f) declared.add(f);
+    }
+  }
+  // A declared face absent from FLEET_FACES cannot be flagged on any surface that
+  // does not allow it — so the declaration would be unenforceable.
+  for (const face of declared) {
+    const unrelated = ["aster-io", "aster-sports", "aster-studio", "nova-select", "st-patricks-armonk"]
+      .find((s) => !approvedFamiliesForSurface(s).allowed.includes(face));
+    if (!unrelated) continue; // allowed everywhere: nothing to flag
+    assert.ok(
+      assertNoForbiddenFaces(unrelated, `:root{ --x: "${face}"; }`).length > 0,
+      `"${face}" is declared in surface-classes.json but is not in FLEET_FACES, so a leak ` +
+        `into ${unrelated} cannot be detected`,
+    );
+  }
 });
 
 test("bindings assert var() binding, not a mere mention", () => {
