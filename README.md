@@ -354,18 +354,24 @@ Rollback = re-pin the previous SHA. Every hop is versioned, reviewable, reversib
 token, a role re-value, or any change to declared design surface (including declaring or
 retiring a font family) · *major* = a removed or renamed token.
 
-### Consumer pins, verified 2026-08-17
+### Consumer pins, verified against each consumer's `origin/main` — 2026-08-18
 
 | Repo | Pinned SHA | = version |
 |---|---|---|
-| aster-io | `b44d154` | **v0.3.2** |
+| **aster-io** | **`6c83711`** | **v0.4.0** — Figtree live on astersports.io |
 | aster-sports | `a1c10f6` | v0.3.1 |
 | aster-studio | `a1c10f6` | v0.3.1 |
 | nova-select | `a1c10f6` | v0.3.1 |
 | st-patricks-armonk | `a1c10f6` | v0.3.1 |
 
-**No consumer is on v0.4.0 yet.** aster-io's re-pin to `6c83711` (v0.4.0) exists on the
-unmerged branch `chore/figtree-repin`; its `main` is still on v0.3.2.
+**aster-io is on v0.4.0.** The other four are on v0.3.1.
+
+> ⚠ **Corrected 2026-08-18.** This table said aster-io was on `b44d154` (v0.3.2) and that
+> *"No consumer is on v0.4.0 yet — aster-io's re-pin to `6c83711` exists on the unmerged
+> branch `chore/figtree-repin`; its `main` is still on v0.3.2."* **That branch merged**
+> (aster-io #180). Read the pin from the consumer's own `origin/main`, never from this
+> table — it has now gone stale twice, which is what a snapshot in two files does.
+> See [`docs/KNOWN_GAPS_AND_PINS.md`](docs/KNOWN_GAPS_AND_PINS.md).
 
 ### Releases
 
