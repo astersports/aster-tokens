@@ -21,10 +21,19 @@ import { readFileSync } from "node:fs";
 const surfaceClasses = JSON.parse(readFileSync(new URL("./surface-classes.json", import.meta.url), "utf8"));
 
 /** Every webfont face the fleet knows about — the forbidden-scan candidate set. A face is
- *  forbidden for a surface iff it is NOT in that surface's `allowed` set. */
+ *  forbidden for a surface iff it is NOT in that surface's `allowed` set.
+ *
+ *  ⚑ A FACE MISSING FROM THIS LIST IS INVISIBLE TO `assertNoForbiddenFaces`. The scan
+ *  iterates FLEET_FACES, not the union of every face in the CSS, so an unlisted face can
+ *  leak into any repo and the guard returns zero failures. That is exactly what happened
+ *  to `Figtree`: it was declared as aster-io's approved `storefront` body face in
+ *  surface-classes.json (v0.4.0) and never added here, so
+ *  `assertNoForbiddenFaces("aster-sports", "font-family:'Figtree'")` passed clean.
+ *  WHENEVER A FACE IS ADDED TO surface-classes.json — class family or deviation — IT MUST
+ *  BE ADDED HERE IN THE SAME COMMIT, or the declaration is unenforceable everywhere else. */
 const FLEET_FACES = [
   "Inter", "Instrument Serif", "IBM Plex Sans", "IBM Plex Mono",
-  "Fraunces", "Barlow Condensed", "Barlow", "Space Grotesk", "Space Mono",
+  "Fraunces", "Barlow Condensed", "Barlow", "Figtree", "Space Grotesk", "Space Mono",
 ];
 
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
