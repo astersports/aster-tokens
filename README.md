@@ -15,6 +15,13 @@ Values-only: no components, no runtime dependencies, no side-effecting selectors
 > consumer at their next re-pin, so the bar is higher than in an app repo — which is
 > exactly why the release gate below exists.
 
+**This README is the reference, and it is a guarded one.** `contrast-guard.mjs` re-derives every
+`N:1` figure written below from the hex against its named ground, so a ratio here cannot be
+hand-edited and an `AA` claim carrying no computed number fails the build. That is why this
+package has no `docs/` directory: the facts live here, where CI already checks them. The *rules*
+an agent must follow are [`CLAUDE.md`](./CLAUDE.md) — short, because it loads on every turn.
+([Why each fact gets one home.](https://github.com/astersports/aster-io/blob/main/docs/DOC_DOCTRINE.md))
+
 Consumed as a git dependency, same mechanism as `@aster/weather`. Consumers pin by **SHA**:
 
 ```jsonc

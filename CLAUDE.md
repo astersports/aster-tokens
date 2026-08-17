@@ -1,8 +1,11 @@
 # CLAUDE.md — aster-tokens (`@aster/tokens`)
 
-> **RULES only.** Concepts → [`README.md`](README.md); facts → `docs/`. Compressed 2026-08-18
-> from 207 lines against [the doc doctrine](https://github.com/astersports/aster-io/blob/main/docs/DOC_DOCTRINE.md);
-> **nothing deleted** — every moved section is linked below.
+> **RULES only.** Compressed 2026-08-18 from 207 lines against
+> [the doc doctrine](https://github.com/astersports/aster-io/blob/main/docs/DOC_DOCTRINE.md);
+> **nothing deleted.** This library has no `docs/` directory on purpose: it is a public package,
+> so [`README.md`](README.md) **is** the reference — and it is a *guarded* one, because
+> `contrast-guard.mjs` re-derives every `N:1` claim written in it. Facts live there; this file
+> is only what an agent must not get wrong.
 > **Canonical estate truth:** `astersports/aster-io` → [`WHAT_IS_BUILT.md`](https://github.com/astersports/aster-io/blob/main/docs/WHAT_IS_BUILT.md).
 > Read it before claiming what any Aster product is or does; this file governs *this library only*.
 
@@ -47,7 +50,7 @@ components, no runtime dependencies, no side-effecting selectors. Consumed as a 
 - **`surface-classes.json`'s version string lags `package.json`** (0.3.2 vs 0.4.0). Content is
   right, string is stale, no guard asserts it.
 
-Detail: [`docs/KNOWN_GAPS_AND_PINS.md`](docs/KNOWN_GAPS_AND_PINS.md).
+Detail: [`README.md` §4](README.md#4--known-gaps-in-the-guard).
 
 ## 3. Read consumer pins from the consumers, never from a table
 
@@ -74,7 +77,7 @@ in both.
 - **12px is a label-only floor** — uppercase tags and timestamps, **never a sentence**.
 
 Routing table, the three live deviations, and why `night` was removed rather than repurposed:
-[`docs/DEVIATIONS.md`](docs/DEVIATIONS.md).
+[`README.md` §2–3](README.md#2-type--two-classes-routed-by-job).
 
 ## 5. Two colour facts that are easy to get wrong
 
@@ -96,5 +99,5 @@ ratified canon, and `surface-classes.json` must route every repo to a known clas
 | | |
 |---|---|
 | **Canonical estate truth** · cross-repo state | `aster-io` → `docs/WHAT_IS_BUILT.md` · `docs/ESTATE_STATE.md` |
-| Surface classes, deviations, `night`, the release gate, colour | [`docs/DEVIATIONS.md`](docs/DEVIATIONS.md) |
-| Guard gaps and live consumer pins | [`docs/KNOWN_GAPS_AND_PINS.md`](docs/KNOWN_GAPS_AND_PINS.md) |
+| Surface classes, deviations, `night`, the release gate, palette | [`README.md`](README.md) §2–3, §5 |
+| Guard gaps and live consumer pins | [`README.md`](README.md) §4, §7 |
