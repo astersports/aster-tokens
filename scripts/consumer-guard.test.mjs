@@ -25,11 +25,14 @@ const IO_LINK =
   '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@400&family=Instrument+Serif:ital@0;1&display=swap">';
 
 test("approved family set is the class families + declared deviations", () => {
-  // aster-io editorial base + the scoped "storefront" body-face deviation (v0.3.3).
-  // Figtree is the ONLY addition: display and mono are unchanged from the class, so they
-  // appear once, not twice.
+  // ⚑ aster-io HAS NO DEVIATION SINCE v0.5.0. This read
+  // ["Figtree", "IBM Plex Mono", "IBM Plex Sans", "Instrument Serif"] — the editorial
+  // base plus the scoped "storefront" body face. `storefront` was retired: measured on
+  // all 14 live routes, Figtree was in no element's font stack and no Figtree woff2 was
+  // ever fetched, and the scope string named files (`.ah`, home.css) that had been
+  // deleted. So the set is the class families, and nothing else.
   assert.deepEqual(approvedFamiliesForSurface("aster-io").allowed.sort(),
-    ["Figtree", "IBM Plex Mono", "IBM Plex Sans", "Instrument Serif"]);
+    ["IBM Plex Mono", "IBM Plex Sans", "Instrument Serif"]);
   // the base three are still REQUIRED — a deviation adds, it never replaces
   assert.deepEqual(approvedFamiliesForSurface("aster-io").required.sort(),
     ["IBM Plex Mono", "IBM Plex Sans", "Instrument Serif"]);
@@ -43,7 +46,9 @@ test("approved family set is the class families + declared deviations", () => {
   // the assertion that stops "approved for the storefront" quietly becoming
   // "approved everywhere", which is the whole failure mode the contract exists
   // to prevent.
-  for (const other of ["aster-sports", "aster-studio", "nova-select", "st-patricks-armonk"]) {
+  // Figtree is now approved for NO surface, aster-io included — so this holds for the
+  // whole fleet rather than for everyone-but-one.
+  for (const other of ["aster-io", "aster-sports", "aster-studio", "nova-select", "st-patricks-armonk"]) {
     const a = approvedFamiliesForSurface(other).allowed;
     assert.ok(!a.includes("Figtree"), `${other} must not inherit Figtree`);
   }
@@ -101,6 +106,8 @@ test("scope: Barlow is allowed for aster-sports, forbidden for aster-io", () => 
 });
 
 /* ⚑ REGRESSION — THE FLEET_FACES OMISSION (fixed 2026-08-17).
+   (Historical: `storefront` was retired in v0.5.0 and Figtree is approved nowhere now.
+   The regression this guards against is unchanged — an unlisted face is invisible.)
    `Figtree` was declared as aster-io's approved `storefront` body face in
    surface-classes.json (v0.4.0) but never added to FLEET_FACES in consumer-guard.js.
    `assertNoForbiddenFaces` iterates FLEET_FACES, so an unlisted face is INVISIBLE to it:
@@ -120,7 +127,15 @@ test("a face approved for ONE surface is forbidden — and detectable — on the
     );
   }
   // and it stays clean where it is genuinely approved
-  assert.deepEqual(assertNoForbiddenFaces("aster-io", ":root{ --body: 'Figtree', sans-serif; }"), []);
+  // ⚑ AND aster-io IS NO LONGER THE EXCEPTION. This asserted [] — Figtree was approved
+  // for exactly one surface. Since v0.5.0 it is approved for none, so the leak check
+  // fires here too. That is the narrowing doing its job: it is what makes aster-io's own
+  // drift-guard demand the Google Fonts request be removed.
+  assert.ok(
+    assertNoForbiddenFaces("aster-io", ":root{ --body: 'Figtree', sans-serif; }")
+      .some((f) => /forbidden "Figtree"/.test(f)),
+    "aster-io must FLAG Figtree too — no surface declares it approved since v0.5.0",
+  );
 });
 
 /* Every face named anywhere in the contract must be scannable. This is the fence that
