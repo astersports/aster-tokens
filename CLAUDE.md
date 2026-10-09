@@ -1,103 +1,108 @@
 # CLAUDE.md — aster-tokens (`@aster/tokens`)
 
-> **RULES only.** Compressed 2026-08-18 from 207 lines against
-> [the doc doctrine](https://github.com/astersports/aster-io/blob/main/docs/DOC_DOCTRINE.md);
-> **nothing deleted.** This library has no `docs/` directory on purpose: it is a public package,
-> so [`README.md`](README.md) **is** the reference — and it is a *guarded* one, because
-> `contrast-guard.mjs` re-derives every `N:1` claim written in it. Facts live there; this file
-> is only what an agent must not get wrong.
-> **Canonical estate truth:** `astersports/aster-io` → [`WHAT_IS_BUILT.md`](https://github.com/astersports/aster-io/blob/main/docs/WHAT_IS_BUILT.md).
-> Read it before claiming what any Aster product is or does; this file governs *this library only*.
+> **RULES only** ([doc doctrine](https://github.com/astersports/aster-io/blob/main/docs/DOC_DOCTRINE.md)).
+> Facts live in [`README.md`](README.md) — this repo has no other fact base, and README's `N:1`
+> figures are re-measured by CI. Estate truth: `astersports/aster-io` →
+> [`WHAT_IS_BUILT.md`](https://github.com/astersports/aster-io/blob/main/docs/WHAT_IS_BUILT.md) and
+> [`ESTATE_STATE.md`](https://github.com/astersports/aster-io/blob/main/docs/ESTATE_STATE.md).
+> The pre-2026-10-09 rules, verbatim (old `§N` citations resolve there):
+> [`docs/CLAUDE_MD_ARCHIVE_2026-10-09.md`](docs/CLAUDE_MD_ARCHIVE_2026-10-09.md).
 
-**This is a SHARED library, and this repo is PUBLIC.** A change here lands in every consumer at
-their next re-pin. That is why the bar is higher than in an app repo, and why the release gate
-exists.
+**This repo is PUBLIC.** Never commit a secret, a credential-shaped string, or anyone's personal data.
+Values-only: no components, no runtime dependencies, no side-effecting selectors.
 
-`@aster/tokens` **v0.4.0** — not a stylesheet, a **contract**. One light palette and one type
-system, defined once, read by five repos, **enforced in CI on both sides**. Values-only: no
-components, no runtime dependencies, no side-effecting selectors. Consumed as a git dependency
-(`github:astersports/aster-tokens#<sha-or-tag>`), same mechanism as `@aster/weather`.
+## 1. What will be got wrong first
 
-## 1. The rules that carry consequence
+- **Read the version from `package.json` on `origin/main`**, never from this file, README prose or a
+  handoff. `surface-classes.json` carries its own `"version"`; bump it in the same commit — no guard
+  asserts the two agree.
+- **Never claim this package is the estate's source of truth.** Owner decision 2026-09-12: it is a
+  reference guide. Some consumers own a vendored copy of the files; the rest pin a SHA.
+- **Never state which consumer is on what in this file or in a PR as a standing fact.** Read it from
+  each consumer's own `origin/main`: `package.json` → `@aster/tokens` for a git-dependency pin, or the
+  vendored copy's `README.md` (`client/src/styles/aster-tokens/` or `src/styles/aster-tokens/`) for
+  the commit it was copied at. ESTATE_STATE's repo table is a dated snapshot, not the answer.
+- **A change here reaches no one by merging.** A pinning consumer gets it only through its own
+  reviewed re-pin PR; a vendoring consumer never gets it unless that repo copies it in by hand.
+- **Never describe a guard as enforcing more than it does** — the three gaps in §4 are real today.
+- **Never write a contrast ratio in `CLAUDE.md`, a PR body or a `docs/` file as a fact** —
+  contrast-guard scans only `tokens.css` and `README.md`. State ratios there, or link to them.
 
-- **A font or colour change cannot ship by merely merging.** `contrast-guard.mjs` re-measures
-  every documented ratio in CI against the **named ground**, and `auto-tag.yml` **holds the tag**
-  on any minor/major until the merge commit carries `[release-approved]`. That hold is the
-  feature.
-- **Never hand-edit a contrast figure.** Change the value and let the guard print the real
-  number. **An `AA`/`AAA` claim carrying no computed figure fails the build** — an unfalsifiable
-  claim outlives a wrong number, because there is nothing in it to check.
-- **Adding a contrast claim means adding the pair to `CANON` (or `BELOW`)** in
-  `contrast-guard.mjs`, in the same commit.
-- **A face added to `surface-classes.json` is added to `FLEET_FACES` in the same commit**, or
-  the declaration is unenforceable everywhere else. `assertNoForbiddenFaces` iterates
-  `FLEET_FACES`, so an unlisted face is **invisible to the scan** — this shipped once, with
-  Figtree. See gap 1.
-- **A deviation ADDS to a surface's allowed faces; it never replaces the class families**, which
-  stay required.
-- **Changing a value means bumping the version.** Retiring or declaring approved font families
-  *is* design surface, so it is a MINOR, not a patch.
-- **Version-bump PRs are never auto-merged.**
+## 2. The release hold — load-bearing, do not route around it
 
-## 2. ⚠ Do not overclaim what the guard enforces
+- **A minor or major tag is HELD** by `.github/workflows/auto-tag.yml` unless the merge commit
+  message contains `[release-approved]` (or the workflow is force-dispatched). A patch auto-tags.
+- **Put `[release-approved]` in a merge commit only when the owner has approved that release.**
+  Never add it to a commit to get a tag cut, and never force-dispatch on your own initiative.
+- **Declaring or retiring an approved font family is a MINOR**, never a patch — it is design surface.
+- **Semver:** patch = a value correction that keeps intent · minor = a new token, a role re-value or
+  any change to declared design surface · major = a removed or renamed token.
+- **Changing any value means bumping the version** in `package.json` and `surface-classes.json`.
+- **Never move or delete a tag** — history rewrite is an owner gate, and consumers pin the SHAs.
+- **No owner label exists in this repo's CI.** The 2026-10-04 directive retired `owner-go` and
+  `dep-review-approved`; never request or apply them here. `[release-approved]` is a commit marker
+  for the tag, not a merge gate.
 
-- **Deviation scope is NOT enforced here.** `approvedFamiliesForSurface` returns one `allowed`
-  set **per surface**, not per scope — Figtree is allowed anywhere in `aster-io`, not only under
-  `.ah`. The guard catches a face crossing a **repo** boundary, never a **selector** boundary.
-- **Retired faces are unscannable.** `Bricolage Grotesque` and `Geist` are in no `allowed` set
-  and also not in `FLEET_FACES`, so a reappearance would not be flagged. Making a retired face
-  permanently forbidden is a policy call for the owner, not a doc edit.
-- **`surface-classes.json`'s version string lags `package.json`** (0.3.2 vs 0.4.0). Content is
-  right, string is stale, no guard asserts it.
+## 3. The guards — what CI runs (`.github/workflows/ci.yml`, every PR and push to `main`)
 
-Detail: [`README.md` §4](README.md#4--known-gaps-in-the-guard).
+- `npm run drift-guard` (`scripts/drift-guard.mjs`): `tokens.css` ↔ `tokens.js` and
+  `typography.css` ↔ `typography.js` agree per role, every value equals the ratified canon, and
+  `surface-classes.json` routes every surface to a known class.
+- `npm run contrast-guard` (`scripts/contrast-guard.mjs`): every `N:1` in `tokens.css` and
+  `README.md` must be a WCAG threshold, a ratio the guard measured, or tagged `[withdrawn]` on
+  the same line; every `tokens.css` comment saying AA/AAA must carry a measured figure.
+- `npm test` (`scripts/consumer-guard.test.mjs`): the shared consumer guard (`consumer-guard.js`).
+- **Run all three before pushing**, and report each result exactly. Node 20 in CI.
+- **Never hand-edit a contrast figure.** Change the hex, run contrast-guard, copy the number it prints.
+- **A new contrast claim adds its pair to `CANON` (or `BELOW`)** in `contrast-guard.mjs`, same commit.
+- **An AA claim with no computed figure is a defect**, not a softer claim. Name the ground and ratio.
+- **Never weaken, skip or loosen a guard or test to make a change pass.** Fix the change.
+- **A new guard is proven red before it is trusted** — restore the defect, watch it fail, restore.
 
-## 3. Read consumer pins from the consumers, never from a table
+## 4. Faces and surfaces — what the guard does NOT catch
 
-**Consumers pin by SHA.** To learn what a repo is on, read `package.json` on **its
-`origin/main`** — not from a doc here. The pin table in this repo has now gone stale twice
-between sessions.
+- **A face added to `surface-classes.json` goes into `FLEET_FACES` in `consumer-guard.js` in the
+  same commit.** `assertNoForbiddenFaces` scans only `FLEET_FACES`; an unlisted face is invisible.
+- **Gap: deviation SCOPE is not enforced.** `approvedFamiliesForSurface` returns one `allowed` set
+  per surface, so a scoped deviation's faces are allowed anywhere in that repo. Never claim a
+  selector boundary is guarded.
+- **Gap: Bricolage Grotesque and Geist are approved nowhere and are NOT in `FLEET_FACES`**, so a
+  reappearance would not be flagged. Making a retired face permanently forbidden is the owner's call.
+- **Gap: nothing asserts `surface-classes.json`'s `"version"` equals `package.json`'s.**
+- **A deviation ADDS faces to a surface; the class families stay required.** Never replace them.
+- **Retire a deviation rather than repurpose it** — an `approvedBy` stamp is for one decision on one
+  date. Removal narrows the allowlist: byte-verify no consumer renders the face first.
+- **A new deviation needs an owner ruling** naming its surface, scope, faces and date.
 
-As verified 2026-08-18: **aster-io is on `6c83711` = v0.4.0** (Figtree live on astersports.io);
-aster-sports, aster-studio, nova-select and st-patricks-armonk are on `a1c10f6` = v0.3.1. The
-previous version of this file asserted no consumer was on v0.4.0 and that aster-io's re-pin was
-"a branch, not `main`" — **that branch merged** (aster-io #180).
+## 5. Values that are easy to get wrong (figures: README §5)
 
-Rollback = re-pin the previous SHA. Every hop is versioned, reviewable, reversible.
-
-## 4. Type and scale floors
-
-Two surface classes routed by **job**, not by repo taste — **editorial** (Instrument Serif /
-IBM Plex Sans / IBM Plex Mono) for marketing and brand, **app** (Inter / Inter / IBM Plex Mono,
-with `'cv05','cv08'`) for product. Scale `--atk-scale-1..6` = **34 / 24 / 20 / 17 / 15 / 12 px**
-in both.
-
-- **17px is the readable-body floor** — anything a user reads.
-- **15px is the dense-table-cell minimum.**
-- **12px is a label-only floor** — uppercase tags and timestamps, **never a sentence**.
-
-Routing table, the three live deviations, and why `night` was removed rather than repurposed:
-[`README.md` §2–3](README.md#2-type--two-classes-routed-by-job).
-
-## 5. Two colour facts that are easy to get wrong
-
-- **`--atk-brass` (`#B9871F`) is a DARK-ground colour.** AA on navy; on light it is 3.10:1 on
-  `--atk-ground` — **non-text UI only** (icons, borders, large text), never body copy, and below
-  3:1 on the tinted and secondary surfaces. For gold text on light use `--atk-gold-text`
-  (`#8F6708`, 4.94:1).
-- **`--atk-text-muted` (`#6B7488`) is AA on exactly two grounds** — `--atk-ground` and
-  `--atk-panel`. It is **below AA** on `--atk-surface-secondary`, `--atk-gold-tint` and
-  `--atk-surface-tertiary`; use `--atk-text-secondary` there.
+- **`--atk-brass` is a dark-ground colour.** On light grounds it is non-text UI only; for gold text
+  on light use `--atk-gold-text`.
+- **`--atk-gold-text` on `--atk-gold-tint` misses the body floor** — use `--atk-ink` for body copy
+  on a gold tint.
+- **`--atk-text-muted` is AA on `--atk-ground` and `--atk-panel` only**; anywhere else use
+  `--atk-text-secondary`. `--atk-text-tertiary` is for dividers, never meaningful text or icons.
+- **Type floors:** 17px readable body (`--atk-scale-4`) · 15px dense table cells (`--atk-scale-5`) ·
+  12px labels only, never a sentence (`--atk-scale-6`).
+- **Two classes, routed by job:** editorial (marketing/brand) and app (product). Routing lives in
+  `surface-classes.json`; `aster-weather` is declared `outOfScope`, not missing.
+- **cv05/cv08 are Inter variants — app class only.** Editorial's feature setting stays `normal`.
+- **The v0.2.x `--atk-fs-*` scale and `--atk-font-sans` are frozen byte-identical** and deprecated;
+  never change or remove them without a major.
+- **Navy is role-split** (`navy-ui`, `navy-night`, deprecated `navy-legacy`); never collapse them.
+- **Status, team and tenant colours are not in this package**; never add them without an owner ruling.
 
 ## 6. Working here
 
-Branch, PR into `main`, keep `main` green. CI runs `drift-guard`, `contrast-guard`, and the SFGC
-consumer-guard tests. `drift-guard.mjs` is the third leg of the contract: `tokens.css` ↔
-`tokens.js` and `typography.css` ↔ `typography.js` must agree, every value must match the
-ratified canon, and `surface-classes.json` must route every repo to a known class.
+- **Branch + PR into `main`, keep `main` green.** `main` is protected; never push to it.
+- **Ground against `origin/main`, never a working checkout** — `git fetch origin` first.
+- **A PR that bumps the version holds for the owner** — never arm auto-merge on it.
+- **README changes are guarded too**: any `N:1` you add or move in README runs through contrast-guard.
+- **Keep the README the reference** and this file rules only; a fact goes to README, linked here.
+- **Byte-verify a font's or token's real consumers across the estate before removing it.**
 
 | | |
 |---|---|
-| **Canonical estate truth** · cross-repo state | `aster-io` → `docs/WHAT_IS_BUILT.md` · `docs/ESTATE_STATE.md` |
-| Surface classes, deviations, `night`, the release gate, palette | [`README.md`](README.md) §2–3, §5 |
-| Guard gaps and live consumer pins | [`README.md`](README.md) §4, §7 |
+| Estate truth · cross-repo state · release policy | `aster-io` → `WHAT_IS_BUILT.md` · `ESTATE_STATE.md` · `AUTOMATION_CHARTER.md` |
+| Guards, type, deviations, palette, semver | [`README.md`](README.md) §1–§7 |
+| Superseded rules (old `§N` citations) | [`docs/CLAUDE_MD_ARCHIVE_2026-10-09.md`](docs/CLAUDE_MD_ARCHIVE_2026-10-09.md) |
