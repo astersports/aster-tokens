@@ -1,8 +1,8 @@
 # @aster/tokens
 
-**The enforced design contract for the Aster estate.** One light palette and one type
-system, defined once here, read by five repos — and re-measured in CI on both sides, so a
-value cannot drift and a contrast claim cannot be hand-edited.
+**The reference design guide for the Aster estate.** One light palette and one type
+system, defined here and re-measured in CI, so a value cannot drift inside this package and a
+contrast claim cannot be hand-edited. Consumers pin a SHA or keep a vendored copy; neither moves when this repo merges.
 
 Values-only: no components, no runtime dependencies, no side-effecting selectors.
 
@@ -163,28 +163,13 @@ string naming deleted files — the same evidence that retired `night`. Figtree 
 
 ## 4. ⚠ Known gaps in the guard
 
-### 4.1 `FLEET_FACES` must be updated whenever a face is declared — fixed 2026-08-17
+### 4.1 `FLEET_FACES` is the scan's whole world
 
-`assertNoForbiddenFaces` iterates **`FLEET_FACES`**, not the union of faces found in the
-CSS. **A face absent from that list is invisible to the scan.**
-
-`Figtree` was declared as aster-io's approved `storefront` body face in v0.4.0 and never
-added to `FLEET_FACES`. Reproduced before the fix:
-
-```js
-assertNoForbiddenFaces("aster-sports", "font-family:'Figtree'") // => []   zero failures
-```
-
-Fixed by adding `Figtree` to `FLEET_FACES`, with two regression tests: one asserting the
-leak is flagged on all four other surfaces, one asserting **every** face named anywhere in
-`surface-classes.json` is in the scan's candidate set — so the next deviation cannot repeat
-the omission. Both fail if the `FLEET_FACES` line is reverted.
-
-**Rule:** a face added to `surface-classes.json` is added to `FLEET_FACES` in the same
-commit, or the declaration is unenforceable everywhere else.
-
-> Consumers pin by SHA, so **nothing changes for them until they re-pin.** Verified safe:
-> no repo outside aster-io renders Figtree today.
+`assertNoForbiddenFaces` iterates **`FLEET_FACES`**, not the union of faces found in the CSS, so
+**a face absent from that list is invisible to the scan.** Figtree once slipped through this way
+(declared in v0.4.0, missing from the list, fixed 2026-08-17); a regression test now asserts every
+face named in `surface-classes.json` is in the scan's candidate set. Figtree stays in `FLEET_FACES`
+after its v0.5.0 retirement, so it is now flagged on every surface.
 
 ### 4.2 Deviation *scope* is not enforced by this package
 
@@ -196,7 +181,7 @@ boundary. That is a consumer-side concern — do not claim the contract enforces
 ### 4.3 Retired faces remain unscannable
 
 `Bricolage Grotesque` and `Geist` are approved for no surface, but they are also not in
-`FLEET_FACES`, so a reappearance would not be flagged. Verified absent from all five repos.
+`FLEET_FACES`, so a reappearance would not be flagged. Verified absent from all six repos on 2026-08-16 (the v0.4.0 ruling in `surface-classes.json`).
 Flagged rather than fixed: making a retired face permanently forbidden is a policy call.
 
 ### 4.4 Nothing asserts `surface-classes.json`'s version equals `package.json`'s
@@ -344,10 +329,6 @@ in a comment does not trip, and `Interstate` does not false-match `Inter`), and 
 
 Rollback = re-pin the previous SHA. Every hop is versioned, reviewable, reversible.
 
-**semver here:** *patch* = a value correction that does not change intent · *minor* = a new
-token, a role re-value, or any change to declared design surface (including declaring or
-retiring a font family) · *major* = a removed or renamed token.
-
 **Where each consumer is:** never recorded here — read each consumer's `origin/main` (`package.json` → `@aster/tokens`, or the vendored copy's `README.md`). A pin table lived here until 2026-10 and went stale three times (last verified 2026-08-18); see git history.
 
 ### Releases
@@ -375,12 +356,4 @@ retiring a font family) · *major* = a removed or renamed token.
 
 ## 8. Working here
 
-- Branch, PR into `main`, keep `main` green. CI runs drift-guard, contrast-guard, and the
-  SFGC consumer-guard tests.
-- Changing a value means bumping the version — and a minor/major is **held** until the
-  merge commit carries `[release-approved]`. That hold is the feature.
-- Adding a face anywhere means adding it to `FLEET_FACES` in the same commit.
-- Adding a contrast claim means adding the pair to `CANON` (or `BELOW`) in
-  `contrast-guard.mjs`. A claim carrying no measured figure fails the build, by design.
-- **Byte-verify a font's real consumers before removing it** — the sweep that seeded type
-  here found three "dead" fonts that were live.
+The rules are [`CLAUDE.md`](./CLAUDE.md) §2–§6 — release hold, guards, faces, branch/PR.

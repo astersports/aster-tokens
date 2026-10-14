@@ -104,5 +104,5 @@ Values-only: no components, no runtime dependencies, no side-effecting selectors
 | | |
 |---|---|
 | Estate truth · cross-repo state · release policy | `aster-io` → `WHAT_IS_BUILT.md` · `ESTATE_STATE.md` · `AUTOMATION_CHARTER.md` |
-| Guards, type, deviations, palette, semver | [`README.md`](README.md) §1–§7 |
+| Guards, type, deviations, palette | [`README.md`](README.md) §1–§7 |
 | Superseded rules (old `§N` citations) | [`docs/CLAUDE_MD_ARCHIVE_2026-10-09.md`](docs/CLAUDE_MD_ARCHIVE_2026-10-09.md) |
