@@ -8,8 +8,8 @@ Values-only: no components, no runtime dependencies, no side-effecting selectors
 
 > **Aster Sports** is a creative company focused on **AAU basketball** whose platform is
 > **not limited to it** — the St. Patrick parish build is the proof, and it is one of the
-> five surfaces this package routes. Canonical estate truth lives in the `astersports.io`
-> repo → `docs/WHAT_IS_BUILT.md`.
+> five surfaces this package routes. Canonical estate truth: `astersports/aster-io` →
+> [`docs/WHAT_IS_BUILT.md`](https://github.com/astersports/aster-io/blob/main/docs/WHAT_IS_BUILT.md).
 >
 > **This is a shared library, and this repo is public.** A change here reaches every
 > consumer at their next re-pin, so the bar is higher than in an app repo — which is
@@ -18,14 +18,14 @@ Values-only: no components, no runtime dependencies, no side-effecting selectors
 **This README is the reference, and it is a guarded one.** `contrast-guard.mjs` re-derives every
 `N:1` figure written below from the hex against its named ground, so a ratio here cannot be
 hand-edited and an `AA` claim carrying no computed number fails the build. That is why this
-package has no `docs/` directory: the facts live here, where CI already checks them. The *rules*
+package keeps its facts here rather than in `docs/` (which holds only the CLAUDE.md archive): CI already checks them here. The *rules*
 an agent must follow are [`CLAUDE.md`](./CLAUDE.md) — short, because it loads on every turn.
 ([Why each fact gets one home.](https://github.com/astersports/aster-io/blob/main/docs/DOC_DOCTRINE.md))
 
-Consumed as a git dependency, same mechanism as `@aster/weather`. Consumers pin by **SHA**:
+Consumed two ways: some repos pin a git dependency by **SHA** (same mechanism as `@aster/weather`); others keep a vendored copy under `client/src/styles/aster-tokens/` or `src/styles/aster-tokens/`. Read which from each consumer's own `origin/main`.
 
 ```jsonc
-{ "@aster/tokens": "github:astersports/aster-tokens#6c8371182cc74d6156a40f65b579d5c9459f140c" }
+{ "@aster/tokens": "github:astersports/aster-tokens#<commit-sha>" }
 ```
 
 ---
@@ -103,7 +103,7 @@ Weights `--atk-fw-*` (400/500/600/700), line-heights `--atk-lh-{tight,body}`,
 
 | Surface | Class | Note |
 |---|---|---|
-| `aster-io` | **editorial** | the firm's storefront; the editorial reference. Scoped `storefront` deviation — see below |
+| `aster-io` | **editorial** | the firm's storefront; the editorial reference. No deviation (`storefront` retired v0.5.0) |
 | `nova-select` | **editorial** | sales demo / showroom — classified by *job*, not plumbing |
 | `aster-sports` | **app** | Hub; half of the Hub↔App P0 invariant. Scoped `broadcast` deviation |
 | `aster-studio` | **app** | Print Studio, whole repo (Join/Billing included) |
@@ -115,27 +115,10 @@ coverage is provably complete at five in-scope repos.
 
 ---
 
-## 3. Deviations — three approved, one retired
+## 3. Deviations — two approved, two retired
 
 A deviation **adds** to a surface's allowed faces. The class families stay **required**: a
 deviation never replaces them.
-
-### `storefront` — aster-io, approved Frank 2026-08-16
-
-Scope `.ah` (the astersports.io marketing surface: `client/src/styles/home.css` +
-`register.css`). **Body face → Figtree.** Display stays Instrument Serif; mono stays
-IBM Plex Mono.
-
-Body face **only**, deliberately. The display serif is the brand signature with a
-cross-repo blast radius and is not touched. The mono is kept because it is what makes
-figures and statuses read as instrument panel across every surface. The body sans is the
-most-used voice on the page and so the largest change per unit of churn. Figtree is on
-Google Fonts, so this stays off the self-hosting path entirely. Explicitly **not Inter**
-(the category default — it would make the page more generic, not less) and explicitly
-**not Geist** (allowlisted by the withdrawn `night` deviation; choosing it would let the
-typeface be picked by what was cheapest to permit).
-
-**One surface leading, NOT a new estate standard.** Do not propagate without a fresh ruling.
 
 ### `broadcast` — aster-sports, approved Frank 2026-07-19
 
@@ -169,6 +152,12 @@ permission — and therefore the only one that can leave a face renderable with 
 sanctioning it. `scripts/consumer-guard.test.mjs` asserts Bricolage Grotesque and Geist are
 approved for **no** surface, and it was byte-verified that no stylesheet, link tag or
 component in any repo renders either face.
+
+### RETIRED: `storefront` (v0.5.0)
+
+Declared in v0.4.0 (aster-io `.ah`, body face → Figtree, approved Frank 2026-08-16). Retired by
+owner ruling 2026-09-03 ("Retire storefront upstream and drop Figtree"): zero consumers and a scope
+string naming deleted files — the same evidence that retired `night`. Figtree is now approved for no surface.
 
 ---
 
@@ -210,12 +199,10 @@ boundary. That is a consumer-side concern — do not claim the contract enforces
 `FLEET_FACES`, so a reappearance would not be flagged. Verified absent from all five repos.
 Flagged rather than fixed: making a retired face permanently forbidden is a policy call.
 
-### 4.4 `surface-classes.json` version string lags `package.json`
+### 4.4 Nothing asserts `surface-classes.json`'s version equals `package.json`'s
 
-`surface-classes.json` says `"version": "0.3.2"`; `package.json` says `0.4.0`. The file's
-own `ruling` field documents the v0.4.0 change correctly, so the content is right and only
-the version string is stale. No guard asserts it. It should be corrected on the next
-release rather than left — it is precisely the drift this package exists to prevent.
+The two are bumped by hand in the same commit; no guard compares them. They lagged once
+(0.3.2 vs 0.4.0) and were brought back into step in v0.5.0.
 
 ---
 
@@ -351,7 +338,7 @@ in a comment does not trip, and `Interstate` does not false-match `Inter`), and 
 
 1. Edit a value → bump the version → merge → `auto-tag.yml` tags it (**held** on
    minor/major without `[release-approved]`).
-2. Each consuming repo gets a bump PR that runs its consumer drift-guard plus its own CI.
+2. A **pinning** consumer gets it only through its own reviewed re-pin PR (its consumer drift-guard plus its own CI). A **vendoring** consumer gets it only if that repo copies the files in by hand. A merge here reaches no one.
 3. **Version-bump PRs are never auto-merged** — a human reviews each, especially
    `aster-studio`, which is on the money path.
 
@@ -361,24 +348,7 @@ Rollback = re-pin the previous SHA. Every hop is versioned, reviewable, reversib
 token, a role re-value, or any change to declared design surface (including declaring or
 retiring a font family) · *major* = a removed or renamed token.
 
-### Consumer pins, verified against each consumer's `origin/main` — 2026-08-18
-
-| Repo | Pinned SHA | = version |
-|---|---|---|
-| **aster-io** | **`6c83711`** | **v0.4.0** — Figtree live on astersports.io |
-| aster-sports | `a1c10f6` | v0.3.1 |
-| aster-studio | `a1c10f6` | v0.3.1 |
-| nova-select | `a1c10f6` | v0.3.1 |
-| st-patricks-armonk | `a1c10f6` | v0.3.1 |
-
-**aster-io is on v0.4.0.** The other four are on v0.3.1.
-
-> ⚠ **Corrected 2026-08-18.** This table said aster-io was on `b44d154` (v0.3.2) and that
-> *"No consumer is on v0.4.0 yet — aster-io's re-pin to `6c83711` exists on the unmerged
-> branch `chore/figtree-repin`; its `main` is still on v0.3.2."* **That branch merged**
-> (aster-io #180). Read the pin from the consumer's own `origin/main`, never from this
-> table — it has now gone stale twice, which is what a snapshot in two files does.
-> The guard gaps this table interacts with are §4 above.
+**Where each consumer is:** never recorded here — read each consumer's `origin/main` (`package.json` → `@aster/tokens`, or the vendored copy's `README.md`). A pin table lived here until 2026-10 and went stale three times (last verified 2026-08-18); see git history.
 
 ### Releases
 
@@ -399,6 +369,7 @@ retiring a font family) · *major* = a removed or renamed token.
   must carry a measured figure. MINOR rather than patch **because retiring and declaring
   approved font families is design surface** — and therefore held pending
   `[release-approved]`, by design.
+- **`v0.5.0`** — **retires `storefront`** (Figtree approved for no surface); aster-io's editorial end-state holds with no deviation. MINOR (retiring a font family is design surface), released with `[release-approved]`.
 
 ---
 
