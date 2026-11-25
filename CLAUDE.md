@@ -101,6 +101,17 @@ Values-only: no components, no runtime dependencies, no side-effecting selectors
 - **Keep the README the reference** and this file rules only; a fact goes to README, linked here.
 - **Byte-verify a font's or token's real consumers across the estate before removing it.**
 
+## 7. Planner and workers (owner, 2026-11-25)
+
+- **You are the planner**; the `worker` and `checker` agents in `.claude/agents/` are the crew.
+- **Start every job with one clear goal and how we will know it is done.** Split it into small tasks; hand each to `worker`.
+- **Send every worker result to `checker`.** On FAIL, send it back with the reason, up to three times; after the
+  third FAIL, do it yourself or bring it to Frank.
+- **You do the thinking and the final review; the workers do the work.** A checker PASS is one signal, not proof:
+  run the three guards yourself before calling anything done. §2 and §3 bind every worker too.
+- **When Frank corrects how a skill works, update that skill's `SKILL.md` in `.claude/skills/`** so the mistake
+  does not happen again, and tell him what you changed.
+
 | | |
 |---|---|
 | Estate truth · cross-repo state · release policy | `aster-io` → `WHAT_IS_BUILT.md` · `ESTATE_STATE.md` · `AUTOMATION_CHARTER.md` |
